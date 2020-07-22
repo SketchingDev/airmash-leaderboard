@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/airmash-leaderboard/precache-manifest.835ec9669302eba3b7ae951b79dea96b.js"
+  "/airmash-leaderboard/precache-manifest.2b1df458a719d2047869ac4b248af5e9.js"
 );
 
 self.addEventListener('message', (event) => {

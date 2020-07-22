@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/airmash-leaderboard/static/css/main.5f361e03.chunk.css",
-    "main.js": "/airmash-leaderboard/static/js/main.5f4d29ac.chunk.js",
-    "main.js.map": "/airmash-leaderboard/static/js/main.5f4d29ac.chunk.js.map",
+    "main.css": "/airmash-leaderboard/static/css/main.e3612dc0.chunk.css",
+    "main.js": "/airmash-leaderboard/static/js/main.f906c03c.chunk.js",
+    "main.js.map": "/airmash-leaderboard/static/js/main.f906c03c.chunk.js.map",
     "runtime-main.js": "/airmash-leaderboard/static/js/runtime-main.7c85df62.js",
     "runtime-main.js.map": "/airmash-leaderboard/static/js/runtime-main.7c85df62.js.map",
     "static/js/2.6864048d.chunk.js": "/airmash-leaderboard/static/js/2.6864048d.chunk.js",
     "static/js/2.6864048d.chunk.js.map": "/airmash-leaderboard/static/js/2.6864048d.chunk.js.map",
     "index.html": "/airmash-leaderboard/index.html",
-    "precache-manifest.835ec9669302eba3b7ae951b79dea96b.js": "/airmash-leaderboard/precache-manifest.835ec9669302eba3b7ae951b79dea96b.js",
+    "precache-manifest.2b1df458a719d2047869ac4b248af5e9.js": "/airmash-leaderboard/precache-manifest.2b1df458a719d2047869ac4b248af5e9.js",
     "service-worker.js": "/airmash-leaderboard/service-worker.js",
-    "static/css/main.5f361e03.chunk.css.map": "/airmash-leaderboard/static/css/main.5f361e03.chunk.css.map",
+    "static/css/main.e3612dc0.chunk.css.map": "/airmash-leaderboard/static/css/main.e3612dc0.chunk.css.map",
     "static/js/2.6864048d.chunk.js.LICENSE.txt": "/airmash-leaderboard/static/js/2.6864048d.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.7c85df62.js",
     "static/js/2.6864048d.chunk.js",
-    "static/css/main.5f361e03.chunk.css",
-    "static/js/main.5f4d29ac.chunk.js"
+    "static/css/main.e3612dc0.chunk.css",
+    "static/js/main.f906c03c.chunk.js"
   ]
 }
