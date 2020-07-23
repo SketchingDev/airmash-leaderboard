@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/airmash-leaderboard/static/css/main.e3612dc0.chunk.css",
+    "main.css": "/airmash-leaderboard/static/css/main.82d8018a.chunk.css",
     "main.js": "/airmash-leaderboard/static/js/main.f906c03c.chunk.js",
     "main.js.map": "/airmash-leaderboard/static/js/main.f906c03c.chunk.js.map",
     "runtime-main.js": "/airmash-leaderboard/static/js/runtime-main.7c85df62.js",
@@ -8,15 +8,15 @@
     "static/js/2.6864048d.chunk.js": "/airmash-leaderboard/static/js/2.6864048d.chunk.js",
     "static/js/2.6864048d.chunk.js.map": "/airmash-leaderboard/static/js/2.6864048d.chunk.js.map",
     "index.html": "/airmash-leaderboard/index.html",
-    "precache-manifest.2b1df458a719d2047869ac4b248af5e9.js": "/airmash-leaderboard/precache-manifest.2b1df458a719d2047869ac4b248af5e9.js",
+    "precache-manifest.688d0189305988662d8a330b3560fae1.js": "/airmash-leaderboard/precache-manifest.688d0189305988662d8a330b3560fae1.js",
     "service-worker.js": "/airmash-leaderboard/service-worker.js",
-    "static/css/main.e3612dc0.chunk.css.map": "/airmash-leaderboard/static/css/main.e3612dc0.chunk.css.map",
+    "static/css/main.82d8018a.chunk.css.map": "/airmash-leaderboard/static/css/main.82d8018a.chunk.css.map",
     "static/js/2.6864048d.chunk.js.LICENSE.txt": "/airmash-leaderboard/static/js/2.6864048d.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.7c85df62.js",
     "static/js/2.6864048d.chunk.js",
-    "static/css/main.e3612dc0.chunk.css",
+    "static/css/main.82d8018a.chunk.css",
     "static/js/main.f906c03c.chunk.js"
   ]
 }
