@@ -1,0 +1,42 @@
+{
+  "name": "@sketchingdev/airmash-client",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Client for the interacting with AirMash games",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "license": "MIT",
+  "files": [
+    "lib/**/*"
+  ],
+  "keywords": [
+    "airmash",
+    "client"
+  ],
+  "scripts": {
+    "clean": "yarn rimraf ./lib",
+    "build": "yarn clean && tsc -p tsconfig.build.json",
+    "test": "jest __tests__/integration",
+    "postinstall": "cd ../../node_modules/@airbattle/protocol/ && yarn build"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.9.1",
+    "@types/node": "^13.9.1",
+    "@types/utf8": "^2.1.6",
+    "@types/ws": "^7.2.4",
+    "jest": "^24.9.0",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^25.2.1",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.5",
+    "wait-for-expect": "^3.0.2"
+  },
+  "dependencies": {
+    "@airbattle/protocol": "github:wight-airmash/ab-protocol#master",
+    "ws": "^7.3.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  }
+}
