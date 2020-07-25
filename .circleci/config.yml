@@ -18,7 +18,7 @@ commands:
 executors:
   node-build-environment:
     docker:
-      - image: circleci/node:8-browsers
+      - image: circleci/node:10-browsers
     environment:
       # Forces yarn to preserve colour output (https://github.com/yarnpkg/yarn/issues/5733)
       FORCE_COLOR: true
@@ -37,7 +37,7 @@ jobs:
   test-all:
     working_directory: ~/repo
     docker:
-      - image: circleci/node:8-browsers
+      - image: circleci/node:10-browsers
         environment:
           FORCE_COLOR: true
       - image: sketchingdev/airbattle-server:4.4.0
