@@ -34,7 +34,7 @@ jobs:
           name: Build Services
           command: yarn build
 
-  test-all:
+  test-airmash-client:
     working_directory: ~/repo
     docker:
       - image: circleci/node:10-browsers
@@ -50,7 +50,7 @@ jobs:
       - yarn-install-with-cache
       - run:
           name: Test Services
-          command: yarn test
+          command: yarn test --scope @sketchingdev/airmash-client
 
 workflows:
   version: 2
@@ -62,7 +62,7 @@ workflows:
             branches:
               ignore:
                 - master
-      - test-all:
+      - test-airmash-client:
           filters:
             branches:
               ignore:
@@ -75,7 +75,7 @@ workflows:
             branches:
               only:
                 master
-      - test-all:
+      - test-airmash-client:
           filters:
             branches:
               only:
