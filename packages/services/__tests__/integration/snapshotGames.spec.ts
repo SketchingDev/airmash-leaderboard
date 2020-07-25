@@ -5,7 +5,6 @@ import {string} from "getenv";
 import {DynamoDB} from "aws-sdk";
 import {DynamoDbGameSnapshotRepository} from "../../src/storage/DynamoDbGameSnapshotRepository";
 import {URL} from "url";
-import {v4} from "uuid";
 
 jest.setTimeout(10 * 100000);
 
@@ -16,10 +15,10 @@ describe("Take snapshots of Games", () => {
     // const localServerUrl = new URL("wss://eu.airmash.online/ffa2");
 
     let gameSnapshotRepository: DynamoDbGameSnapshotRepository;
-    let airMashConnection: AirMashConnection;
+    // let airMashConnection: AirMashConnection;
 
     beforeAll(() => {
-        airMashConnection = new AirMashConnection();
+        // airMashConnection = new AirMashConnection();
 
         gameSnapshotRepository = new DynamoDbGameSnapshotRepository(
             new DynamoDB({region: "us-east-1"}),
@@ -28,8 +27,8 @@ describe("Take snapshots of Games", () => {
     });
 
     test("Snapshot of games saved to DynamoDB", async () => {
-        const playerName = `${v4()}`;
-        await airMashConnection.login(localServerUrl, playerName);
+        // const playerName = `${v4()}`;
+        // await airMashConnection.login(localServerUrl, playerName);
 
         const dependencies: AppDependencies & AdaptorDependencies = {
             gameSnapshotRepository,

@@ -1,5 +1,5 @@
 import {parseGamesFromRemoteFile} from "../../../src/snapshotGames/games/parseGamesFromRemoteFile";
-import {URL} from "url";
+import {URL, parse} from "url";
 
 const testGameData = `
 eu|1|ffa1|Free For All #1|FFA #1|eu.airmash.online|ffa1
@@ -9,10 +9,9 @@ test("games parsed", async () => {
     const client = {
         get: jest.fn().mockResolvedValue({data: testGameData})
     }
+    const games = await parseGamesFromRemoteFile(parse("http://test.test/123"), client);
 
-    const games = await parseGamesFromRemoteFile("http://test.test", client);
-
-    expect(client.get).toHaveBeenCalledWith("http://test.test");
+    expect(client.get).toHaveBeenCalledWith("http://test.test/123");
     expect(games).toStrictEqual([
         {
             gameType: "1",

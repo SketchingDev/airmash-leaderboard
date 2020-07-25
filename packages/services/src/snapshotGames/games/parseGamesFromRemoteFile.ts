@@ -23,6 +23,6 @@ const mapRow = (psv: string): GameUrl => {
 }
 
 export const parseGamesFromRemoteFile = async (url: UrlWithStringQuery, client: Pick<typeof axios, 'get'> = axios): Promise<GameUrl[]> => {
-    const {data} = await client.get<string>(url.toString());
+    const {data} = await client.get<string>(url.href);
     return data.split(lineDelimiter).filter(ignoreEmpty).map(mapRow);
 };
