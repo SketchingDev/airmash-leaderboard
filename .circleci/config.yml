@@ -1,0 +1,82 @@
+version: 2.1
+
+commands:
+  yarn-install-with-cache:
+    steps:
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+      - run:
+          name: Install YARN dependencies
+          command: yarn install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+executors:
+  node-build-environment:
+    docker:
+      - image: circleci/node:8-browsers
+    environment:
+      # Forces yarn to preserve colour output (https://github.com/yarnpkg/yarn/issues/5733)
+      FORCE_COLOR: true
+    working_directory: ~/repo
+
+jobs:
+  build-all:
+    executor: node-build-environment
+    steps:
+      - checkout
+      - yarn-install-with-cache
+      - run:
+          name: Build Services
+          command: yarn build
+
+  test-all:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:8-browsers
+        environment:
+          FORCE_COLOR: true
+      - image: sketchingdev/airbattle-server:4.4.0
+        environment:
+          SERVER_TYPE: FFA
+          SU_PASSWORD: mypass
+    steps:
+      - setup_remote_docker
+      - checkout
+      - yarn-install-with-cache
+      - run:
+          name: Test Services
+          command: yarn test
+
+workflows:
+  version: 2
+
+  commit_jobs:
+    jobs:
+      - build-all:
+          filters:
+            branches:
+              ignore:
+                - master
+      - test-all:
+          filters:
+            branches:
+              ignore:
+                - master
+
+  master:
+    jobs:
+      - build-all:
+          filters:
+            branches:
+              only:
+                master
+      - test-all:
+          filters:
+            branches:
+              only:
+                master
