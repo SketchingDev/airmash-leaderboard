@@ -18,6 +18,7 @@ custom:
   stages:
     - dev
     - prod
+    - ci
   gameStatsTableName: airmash-stats-${self:provider.stage}-game-stats
 
 functions:

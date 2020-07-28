@@ -16,7 +16,8 @@
   "scripts": {
     "clean": "yarn rimraf ./lib",
     "build": "yarn clean && tsc -p tsconfig.build.json",
-    "test": "jest __tests__/integration",
+    "test": "yarn test:integration",
+    "test:integration": "jest __tests__/integration",
     "postinstall": "cd ../../node_modules/@airbattle/protocol/ && yarn build"
   },
   "devDependencies": {

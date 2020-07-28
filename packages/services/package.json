@@ -8,9 +8,13 @@
     "clean": "yarn rimraf ./dist",
     "build": "yarn clean && tsc -p tsconfig.build.json",
     "test": "jest '__tests__/(unit|integration)'",
+    "test:unit": "jest '__tests__/unit'",
+    "test:integration": "jest '__tests__/integration'",
     "postinstall": "cd ../../node_modules/@airbattle/protocol/ && yarn build",
     "deploy:dev": "yarn build && sls deploy --stage dev --conceal",
-    "destroy:dev": "sls remove --stage dev"
+    "destroy:dev": "sls remove --stage dev",
+    "deploy:ci": "yarn build && sls deploy --stage ci --conceal",
+    "destroy:ci": "sls remove --stage ci"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.37",

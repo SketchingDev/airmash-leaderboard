@@ -34,7 +34,17 @@ jobs:
           name: Build Services
           command: yarn build
 
-  test-airmash-client:
+  test-unit:
+    executor: node-build-environment
+    steps:
+      - setup_remote_docker
+      - checkout
+      - yarn-install-with-cache
+      - run:
+          name: Unit Test
+          command: yarn test:unit
+
+  test-integration:
     working_directory: ~/repo
     docker:
       - image: circleci/node:10-browsers
@@ -49,34 +59,40 @@ jobs:
       - checkout
       - yarn-install-with-cache
       - run:
-          name: Test Services
-          command: yarn test --scope @sketchingdev/airmash-client
+          name: Integration Test
+          command: yarn test:integration
+
+  deploy-ci:
+    working_directory: ~/repo
+    executor: node-build-environment
+    steps:
+      - setup_remote_docker
+      - checkout
+      - yarn-install-with-cache
+      - run:
+          name: Deploy CI
+          command: yarn deploy:ci
 
 workflows:
   version: 2
 
   commit_jobs:
     jobs:
-      - build-all:
-          filters:
-            branches:
-              ignore:
-                - master
-      - test-airmash-client:
-          filters:
-            branches:
-              ignore:
-                - master
+      - deploy-ci
+#      - build-all
+#      - test-unit:
+#          requires:
+#            - flow
 
-  master:
-    jobs:
-      - build-all:
-          filters:
-            branches:
-              only:
-                master
-      - test-airmash-client:
-          filters:
-            branches:
-              only:
-                master
+#  master:
+#    jobs:
+#      - build-all:
+#          filters:
+#            branches:
+#              only:
+#                master
+#      - test-airmash-client:
+#          filters:
+#            branches:
+#              only:
+#                master
