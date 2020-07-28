@@ -71,9 +71,6 @@ jobs:
       - checkout
       - yarn-install-with-cache
       - run:
-          name: Build
-          command: yarn build
-      - run:
           name: Deploy CI
           command: yarn deploy:ci
 
