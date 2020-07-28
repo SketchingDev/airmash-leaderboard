@@ -25,14 +25,6 @@ executors:
     working_directory: ~/repo
 
 jobs:
-  build-all:
-    executor: node-build-environment
-    steps:
-      - checkout
-      - yarn-install-with-cache
-      - run:
-          name: Build Services
-          command: yarn build
 
   test-unit:
     executor: node-build-environment
@@ -40,6 +32,9 @@ jobs:
       - setup_remote_docker
       - checkout
       - yarn-install-with-cache
+      - run:
+          name: Build
+          command: yarn build
       - run:
           name: Unit Test
           command: yarn test:unit
@@ -59,8 +54,14 @@ jobs:
       - checkout
       - yarn-install-with-cache
       - run:
+          name: Build
+          command: yarn build
+      - run:
           name: Integration Test
-          command: yarn test:integration
+          command: |
+            export GAME_DATA_URL=http://test.test
+            export GAME_TABLE_NAME=airmash-stats-ci-game-stats
+            yarn test:integration
 
   deploy-ci:
     working_directory: ~/repo
@@ -81,21 +82,10 @@ workflows:
 
   commit_jobs:
     jobs:
-      - deploy-ci
-#      - build-all
-#      - test-unit:
-#          requires:
-#            - flow
-
-#  master:
-#    jobs:
-#      - build-all:
-#          filters:
-#            branches:
-#              only:
-#                master
-#      - test-airmash-client:
-#          filters:
-#            branches:
-#              only:
-#                master
+      - test-unit
+      - deploy-ci:
+          requires:
+            - test-unit
+      - test-integration:
+          requires:
+            - deploy-ci
