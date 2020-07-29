@@ -77,15 +77,50 @@ jobs:
           name: Deploy CI
           command: yarn deploy:ci
 
+  deploy-prod:
+    working_directory: ~/repo
+    executor: node-build-environment
+    steps:
+      - setup_remote_docker
+      - checkout
+      - yarn-install-with-cache
+      - run:
+          name: Build
+          command: yarn build
+      - run:
+          name: Deploy Prod
+          command: yarn deploy:prod
+
 workflows:
   version: 2
 
-  commit_jobs:
+#  commit_jobs:
+#    jobs:
+#      - test-unit:
+#          filters:
+#            branches:
+#              ignore:
+#                - master
+#      - deploy-ci:
+#          requires:
+#            - test-unit
+#      - test-integration:
+#          requires:
+#            - deploy-ci
+
+  master:
     jobs:
       - test-unit
+#          filters:
+#            branches:
+#              only:
+#                - master
       - deploy-ci:
           requires:
             - test-unit
       - test-integration:
           requires:
             - deploy-ci
+      - deploy-prod:
+          requires:
+            - test-integration

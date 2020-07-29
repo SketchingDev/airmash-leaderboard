@@ -14,7 +14,9 @@
     "deploy:dev": "yarn build && sls deploy --stage dev --conceal",
     "destroy:dev": "sls remove --stage dev",
     "deploy:ci": "yarn build && sls deploy --stage ci --conceal",
-    "destroy:ci": "sls remove --stage ci"
+    "destroy:ci": "sls remove --stage ci",
+    "deploy:prod": "yarn build && sls deploy --stage prod --conceal",
+    "destroy:prod": "sls remove --stage prod"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.37",

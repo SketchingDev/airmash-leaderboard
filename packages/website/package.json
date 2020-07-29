@@ -26,8 +26,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "generate-env:dev": "node generate-env.js > .env.local",
-    "predeploy": "yarn build",
-    "deploy": "gh-pages -d build"
+    "predeploy:prod": "yarn build && yarn generate-env:dev",
+    "deploy:prod": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
