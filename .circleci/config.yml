@@ -110,17 +110,17 @@ workflows:
 
   master:
     jobs:
-      - test-unit
+#      - test-unit
 #          filters:
 #            branches:
 #              only:
 #                - master
-      - deploy-ci:
-          requires:
-            - test-unit
-      - test-integration:
-          requires:
-            - deploy-ci
-      - deploy-prod:
-          requires:
-            - test-integration
+#      - deploy-ci:
+#          requires:
+#            - test-unit
+#      - test-integration:
+#          requires:
+#            - deploy-ci
+      - deploy-prod
+#          requires:
+#            - test-integration
