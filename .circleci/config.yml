@@ -99,25 +99,7 @@ workflows:
 
   commit_jobs:
     jobs:
-      - test-unit:
-          filters:
-            branches:
-              ignore:
-                - master
-      - deploy-ci:
-          requires:
-            - test-unit
-      - test-integration:
-          requires:
-            - deploy-ci
-
-  master:
-    jobs:
-      - test-unit:
-          filters:
-            branches:
-              only:
-                - master
+      - test-unit
       - deploy-ci:
           requires:
             - test-unit
@@ -127,3 +109,7 @@ workflows:
       - deploy-prod:
           requires:
             - test-integration
+          filters:
+            branches:
+              only:
+                - master
