@@ -97,33 +97,33 @@ jobs:
 workflows:
   version: 2
 
-#  commit_jobs:
-#    jobs:
-#      - test-unit:
-#          filters:
-#            branches:
-#              ignore:
-#                - master
-#      - deploy-ci:
-#          requires:
-#            - test-unit
-#      - test-integration:
-#          requires:
-#            - deploy-ci
+  commit_jobs:
+    jobs:
+      - test-unit:
+          filters:
+            branches:
+              ignore:
+                - master
+      - deploy-ci:
+          requires:
+            - test-unit
+      - test-integration:
+          requires:
+            - deploy-ci
 
   master:
     jobs:
-#      - test-unit
-#          filters:
-#            branches:
-#              only:
-#                - master
-#      - deploy-ci:
-#          requires:
-#            - test-unit
-#      - test-integration:
-#          requires:
-#            - deploy-ci
-      - deploy-prod
-#          requires:
-#            - test-integration
+      - test-unit
+          filters:
+            branches:
+              only:
+                - master
+      - deploy-ci:
+          requires:
+            - test-unit
+      - test-integration:
+          requires:
+            - deploy-ci
+      - deploy-prod:
+          requires:
+            - test-integration
