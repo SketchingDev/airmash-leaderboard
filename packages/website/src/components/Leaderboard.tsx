@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Table} from "semantic-ui-react";
 import {LeaderboardApiClient} from "../api/LeaderboardApiClient";
 import {PlayerLeaderboard} from "../api/PlayerLeaderboard";
-import {Link} from "react-router-dom";
+// import {Link} from "react-router-dom";
 
 interface LeaderboardProps {
     gameUrl: string | null;
