@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Creates a user that can deploy the project'
+Resources:
+  AirMashLeaderboardDeploymentUser:
+    Type: 'AWS::IAM::User'
+  AirMashLeaderboardDeploymentUserKeys:
+    Type: 'AWS::IAM::AccessKey'
+    Properties:
+      UserName: !Ref AirMashLeaderboardDeploymentUser
+  ServelessAppCFPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: AirMashLeaderboardDeployment
+      Description: This policy allows the AirMashLeaderboardDeploymentUser to deploy all resources necessary
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'cloudformation:*'
+              - 'apigateway:*'
+              - 'events:*'
+              - 's3:*'
+              - 'dynamodb:*'
+              - 'iam:*'
+              - 'iam:GetRole'
+              - 'lambda:*'
+              - 'logs:CreateLogGroup'
+              - 'logs:DescribeLogGroups'
+              - 'logs:DeleteLogGroup'
+            Resource: '*'
+      Users:
+        - !Ref AirMashLeaderboardDeploymentUser
+Outputs:
+  AccessKey:
+    Value: !Ref AirMashLeaderboardDeploymentUserKeys
+    Description: Access Key ID of Deployment User
+  SecretKey:
+    Value: !GetAtt
+      - AirMashLeaderboardDeploymentUserKeys
+      - SecretAccessKey
+    Description: Secret Key of Deployment User

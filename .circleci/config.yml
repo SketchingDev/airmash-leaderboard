@@ -1,0 +1,115 @@
+version: 2.1
+
+commands:
+  yarn-install-with-cache:
+    steps:
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+      - run:
+          name: Install YARN dependencies
+          command: yarn install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+executors:
+  node-build-environment:
+    docker:
+      - image: circleci/node:10-browsers
+    environment:
+      # Forces yarn to preserve colour output (https://github.com/yarnpkg/yarn/issues/5733)
+      FORCE_COLOR: true
+    working_directory: ~/repo
+
+jobs:
+
+  test-unit:
+    executor: node-build-environment
+    steps:
+      - setup_remote_docker
+      - checkout
+      - yarn-install-with-cache
+      - run:
+          name: Build
+          command: yarn build
+      - run:
+          name: Unit Test
+          command: yarn test:unit
+
+  test-integration:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:10-browsers
+        environment:
+          FORCE_COLOR: true
+      - image: sketchingdev/airbattle-server:4.4.0
+        environment:
+          SERVER_TYPE: FFA
+          SU_PASSWORD: mypass
+    steps:
+      - setup_remote_docker
+      - checkout
+      - yarn-install-with-cache
+      - run:
+          name: Build
+          command: yarn build
+      - run:
+          name: Integration Test
+          command: |
+            export GAME_DATA_URL=http://test.test
+            export GAME_TABLE_NAME=airmash-stats-ci-game-stats
+            yarn test:integration
+
+  deploy-ci:
+    working_directory: ~/repo
+    executor: node-build-environment
+    steps:
+      - setup_remote_docker
+      - checkout
+      - yarn-install-with-cache
+      - run:
+          name: Build
+          command: yarn build
+      - run:
+          name: Deploy CI
+          command: yarn deploy:ci
+
+  deploy-prod:
+    working_directory: ~/repo
+    executor: node-build-environment
+    steps:
+      - setup_remote_docker
+      - checkout
+      - yarn-install-with-cache
+      - run:
+          name: Build
+          command: yarn build
+      - add_ssh_keys:
+          fingerprints:
+            - "a7:1c:3a:ae:98:b3:80:cc:17:b8:c0:6e:67:06:82:95"
+      - run:
+          name: Deploy Prod
+          command: yarn deploy:prod
+
+workflows:
+  version: 2
+
+  commit_jobs:
+    jobs:
+      - test-unit
+      - deploy-ci:
+          requires:
+            - test-unit
+      - test-integration:
+          requires:
+            - deploy-ci
+      - deploy-prod:
+          requires:
+            - test-integration
+          filters:
+            branches:
+              only:
+                - master

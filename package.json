@@ -1,0 +1,18 @@
+{
+  "name": "root",
+  "private": true,
+  "devDependencies": {
+    "lerna": "^3.6.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "lerna run build --stream",
+    "test": "lerna run test --stream --parallel",
+    "test:unit": "lerna run test:unit --stream --parallel",
+    "test:integration": "lerna run test:integration --stream --parallel",
+    "deploy:ci": "lerna run deploy:ci --stream",
+    "deploy:prod": "lerna run deploy:prod --stream"
+  }
+}
