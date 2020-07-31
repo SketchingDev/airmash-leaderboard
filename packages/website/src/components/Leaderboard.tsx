@@ -53,7 +53,8 @@ export const Leaderboard = ({gameUrl, client}: LeaderboardProps) => {
                 <Table.Body>
                     {leaderboard?.players.map(player => (
                         <Table.Row key={player.name}>
-                            <Table.Cell><Link to={`player/${encodeURIComponent(player.name)}`}>{player.name}</Link></Table.Cell>
+                            <Table.Cell>{player.name}</Table.Cell>
+                            {/*<Table.Cell><Link to={`player/${encodeURIComponent(player.name)}`}>{player.name}</Link></Table.Cell>*/}
                             <Table.Cell>{player.level}</Table.Cell>
                         </Table.Row>)
                     )}
