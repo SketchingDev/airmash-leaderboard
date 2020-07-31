@@ -1,3 +1,9 @@
+## GitHub Pages
+
+Guide on configuring CircleCI to perform write operations to GitHub repository
+https://circleci.com/docs/2.0/gh-bb-integration/#deployment-keys-and-user-keys
+
+
 ## Using a restricted deployment user
 
 This solution can be deployed with a user that only has the necessary permissions - although they're not as restricted

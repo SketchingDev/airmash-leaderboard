@@ -87,6 +87,9 @@ jobs:
       - run:
           name: Build
           command: yarn build
+      - add_ssh_keys:
+          fingerprints:
+            - "a7:1c:3a:ae:98:b3:80:cc:17:b8:c0:6e:67:06:82:95"
       - run:
           name: Deploy Prod
           command: yarn deploy:prod
