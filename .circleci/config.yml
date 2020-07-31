@@ -113,7 +113,7 @@ workflows:
 
   master:
     jobs:
-      - test-unit
+      - test-unit:
           filters:
             branches:
               only:
