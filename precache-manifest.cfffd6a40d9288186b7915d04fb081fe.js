@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "c52574ee880b994495edf9c8e7387358",
+    "revision": "adc574a6d9672be8a32945786d328810",
     "url": "/airmash-leaderboard/index.html"
   },
   {
-    "revision": "7b1cdb0e8ded68cd22a5",
+    "revision": "6d434395ec0ce2119fa2",
     "url": "/airmash-leaderboard/static/css/main.d1bc57d4.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/airmash-leaderboard/static/js/2.546b84ac.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "7b1cdb0e8ded68cd22a5",
-    "url": "/airmash-leaderboard/static/js/main.34909a04.chunk.js"
+    "revision": "6d434395ec0ce2119fa2",
+    "url": "/airmash-leaderboard/static/js/main.a23d7c25.chunk.js"
   },
   {
     "revision": "768d3be089c70d095b63",
