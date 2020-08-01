@@ -2,7 +2,7 @@
   "name": "website",
   "version": "1.0.0",
   "private": true,
-  "homepage": "http://sketchingdev.github.io/airmash-leaderboard",
+  "homepage": "https://airmash-leaderboard.sketchingdev.co.uk",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
