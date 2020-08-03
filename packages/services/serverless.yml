@@ -22,8 +22,8 @@ custom:
   gameStatsTableName: airmash-stats-${self:provider.stage}-game-stats
 
 functions:
-  gameDetailsCollector:
-    handler: dist/snapshotGames/handler.handler
+  eventsConsumer:
+    handler: dist/handlers/consumer/handler.handler
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -33,32 +33,16 @@ functions:
     environment:
       GAME_DATA_URL: https://raw.githubusercontent.com/airmash-refugees/airmash-games/master/games.txt
       GAME_TABLE_NAME: ${self:custom.gameStatsTableName}
-      PLAYER_NAME: airmash-leaderboard
     events:
-      - schedule: rate(1 hour)
+      - eventBridge:
+          pattern:
+            source:
+              - game-bot
+            detail-type:
+              - login
 
-  gameDetailsEndpoint:
-    handler: dist/api/gameDetails/handler.handler
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - dynamodb:Query
-        Resource: { Fn::GetAtt: [ GameStatsTable, Arn ] }
-    environment:
-      GAME_TABLE_NAME: ${self:custom.gameStatsTableName}
-      TIMESPAN_IN_DAYS: 2
-    events:
-      # TODO Enable caching https://www.serverless.com/plugins/serverless-api-gateway-caching
-      - http:
-          method: GET
-          path: game/{url}/details
-          request:
-            parameters:
-              paths:
-                url: true
-
-  leaderboardEndpoint:
-    handler: dist/api/leaderboard/handler.handler
+  endpoint:
+    handler: dist/handlers/api/handler.handler
     iamRoleStatements:
       - Effect: Allow
         Action:

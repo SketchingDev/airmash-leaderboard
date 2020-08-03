@@ -1,5 +1,4 @@
-import {APIGatewayProxyHandler} from "aws-lambda";
-import {APIGatewayProxyResult} from "aws-lambda/trigger/api-gateway-proxy";
+import {APIGatewayProxyHandler, APIGatewayProxyResult} from "aws-lambda";
 
 export interface AdaptorDependencies {
     corsOrigin: string;

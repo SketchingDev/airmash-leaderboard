@@ -2,9 +2,9 @@ import {int, string, url} from "getenv";
 import {APIGatewayProxyHandler} from "aws-lambda";
 import {DynamoDB} from "aws-sdk";
 import {DynamoDbGameSnapshotRepository} from "../../storage/DynamoDbGameSnapshotRepository";
-import {httpQueryAdaptor} from "../httpQueryAdaptor";
+import {httpQueryAdaptor} from "./httpQueryAdaptor";
 import {leaderboard, LeaderboardDependencies} from "./leaderboard";
-import {parseGamesFromRemoteFile} from "../../snapshotGames/games/parseGamesFromRemoteFile";
+import {parseGamesFromRemoteFile} from "./games/parseGamesFromRemoteFile";
 
 const gameDataUrl = url("GAME_DATA_URL");
 const gameTableName = string("GAME_TABLE_NAME");

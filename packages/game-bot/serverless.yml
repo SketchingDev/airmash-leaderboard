@@ -1,0 +1,35 @@
+service:
+  name: game-bot
+
+plugins:
+  - serverless-plugin-monorepo
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: ${opt:stage, 'dev'}
+  stackTags:
+    PROJECT: "airmash-leaderboard"
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - events:PutEvents
+      Resource: {Fn::Join: ["", [ "arn:aws:events:", { "Ref": "AWS::Region" }, ":", { Ref: "AWS::AccountId" }, ":", "event-bus/default" ]]}
+
+custom:
+  stages:
+    - dev
+    - prod
+    - ci
+
+functions:
+  gameBot:
+    handler: dist/handler.handler
+    timeout: 40
+    environment:
+      GAME_DATA_URL: https://raw.githubusercontent.com/airmash-refugees/airmash-games/master/games.txt
+      PLAYER_NAME: airmash-leaderboard
+    events:
+      - schedule: rate(1 hour)

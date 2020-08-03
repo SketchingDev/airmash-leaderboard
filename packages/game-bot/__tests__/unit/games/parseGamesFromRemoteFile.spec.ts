@@ -1,5 +1,5 @@
+import {parseGamesFromRemoteFile} from "../../../src/games/parseGamesFromRemoteFile";
 import {URL, parse} from "url";
-import {parseGamesFromRemoteFile} from "../../../src/handlers/api/games/parseGamesFromRemoteFile";
 
 const testGameData = `
 eu|1|ffa1|Free For All #1|FFA #1|eu.airmash.online|ffa1

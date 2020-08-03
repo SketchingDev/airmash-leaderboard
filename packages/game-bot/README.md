@@ -1,7 +1,4 @@
-# AirMash Leaderboard
-
-## TODO
-https://www.serverless.com/blog/api-gateway-multiple-services
+# Game Bot
 
 ## Sustaining a connection
 

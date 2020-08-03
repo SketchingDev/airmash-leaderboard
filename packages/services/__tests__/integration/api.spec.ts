@@ -1,20 +1,20 @@
 import {string} from "getenv";
 import {DynamoDB} from "aws-sdk";
-import {DynamoDbGameSnapshotRepository} from "../../../src/storage/DynamoDbGameSnapshotRepository";
+import {DynamoDbGameSnapshotRepository} from "../../src/storage/DynamoDbGameSnapshotRepository";
 import {URL} from "url";
-import {GameType} from "../../../src/airmash/GameType";
-import {AdaptorDependencies, httpQueryAdaptor} from "../../../src/api/httpQueryAdaptor";
+import {GameType} from "../../src/airmash/GameType";
+import {AdaptorDependencies, httpQueryAdaptor} from "../../src/handlers/api/httpQueryAdaptor";
 import {v4} from "uuid";
-import {GameSnapshot} from "../../../src/storage/GameSnapshotRepository";
-import {leaderboard, LeaderboardDependencies} from "../../../src/api/leaderboard/leaderboard";
-import {AirplaneType} from "../../../src/airmash/AirplaneType";
-import {GameUrl} from "../../../src/airmash/GameUrl";
+import {GameSnapshot} from "../../src/storage/GameSnapshotRepository";
+import {leaderboard, LeaderboardDependencies} from "../../src/handlers/api/leaderboard";
+import {AirplaneType} from "../../src/airmash/AirplaneType";
+import {GameUrl} from "../../src/airmash/GameUrl";
 
 jest.setTimeout(10 * 100000);
 
 require('dotenv').config({path: ".env.test"});
 
-describe("Leaderboard", () => {
+describe("API returns leaderboard from snapshot", () => {
     let gameUrl1: GameUrl;
     let gameUrl2: GameUrl;
 

@@ -1,8 +1,8 @@
 import {ServerPackets} from "@airbattle/protocol";
-import {GameType} from "../airmash/GameType";
+import {GameType} from "../../airmash/GameType";
 import {URL} from "url";
-import {GameSnapshot, Player} from "../storage/GameSnapshotRepository";
-import {AirplaneType} from "../airmash/AirplaneType";
+import {GameSnapshot, Player} from "../../storage/GameSnapshotRepository";
+import {AirplaneType} from "../../airmash/AirplaneType";
 import {ServerGameType} from "@sketchingdev/airmash-client";
 
 const convertGameType = ({type}: ServerPackets.Login): GameType => {

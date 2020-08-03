@@ -1,5 +1,5 @@
 import {SaveGame} from "../app";
-import {GameUrl} from "../../airmash/GameUrl";
+import {GameUrl} from "../airmash/GameUrl";
 
 export interface AdaptorDependencies {
     gameDataLoader: () => Promise<GameUrl[]>;

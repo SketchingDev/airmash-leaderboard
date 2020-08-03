@@ -1,6 +1,6 @@
 import axios from "axios";
 import {URL, UrlWithStringQuery} from "url";
-import {GameUrl} from "../../airmash/GameUrl";
+import {GameUrl} from "../../../airmash/GameUrl";
 
 const lineDelimiter = "\n";
 const valueDelimiter = "|";
