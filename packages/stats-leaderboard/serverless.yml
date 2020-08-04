@@ -1,5 +1,5 @@
 service:
-  name: observer-bot
+  name: stats-leaderboard
 
 plugins:
   - serverless-plugin-monorepo

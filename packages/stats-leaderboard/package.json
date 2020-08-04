@@ -1,8 +1,8 @@
 {
-  "name": "@sketchingdev/services",
+  "name": "@sketchingdev/stats-leaderboard",
   "private": true,
   "version": "1.0.0",
-  "description": "A bot that consumes game events by spectating",
+  "description": "Leaderboard stats",
   "license": "MIT",
   "scripts": {
     "clean": "yarn rimraf ./dist",
