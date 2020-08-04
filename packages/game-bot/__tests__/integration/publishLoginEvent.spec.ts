@@ -52,7 +52,7 @@ describe("Produce login event", () => {
         expect(detail).toStrictEqual({
             url: "ws://127.0.0.1:3501/ffa",
             login: {
-                bots: [],
+                bots: expect.any(Array),
                 c: 0,
                 clock: expect.any(Number),
                 id: expect.any(Number),
