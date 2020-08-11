@@ -1,9 +1,9 @@
 import {ServerPackets} from "@airbattle/protocol";
-import {GameType} from "../../airmash/GameType";
 import {URL} from "url";
-import {GameSnapshot, Player} from "../../storage/GameSnapshotRepository";
-import {AirplaneType} from "../../airmash/AirplaneType";
 import {ServerGameType} from "@sketchingdev/airmash-client";
+import {GameType} from "../airmash/GameType";
+import {AirplaneType} from "../airmash/AirplaneType";
+
 
 const convertGameType = ({type}: ServerPackets.Login): GameType => {
     switch (type) {
@@ -20,7 +20,7 @@ const convertGameType = ({type}: ServerPackets.Login): GameType => {
     }
 }
 
-const convertAirplaneType = ({type}: ServerPackets.LoginPlayer): AirplaneType | undefined => {
+const convertAirplaneType = (type: number): AirplaneType => {
     switch (type) {
         case ServerGameType.Predator:
             return AirplaneType.Predator;
@@ -33,7 +33,7 @@ const convertAirplaneType = ({type}: ServerPackets.LoginPlayer): AirplaneType | 
         case ServerGameType.Prowler:
             return AirplaneType.Prowler;
         default:
-            return undefined;
+            throw new Error(`Airplane type not recognised: type=${type}`);
     }
 }
 
@@ -54,17 +54,30 @@ export const convertPlayers = (login: ServerPackets.Login): Player[] => {
         .map(player => ({
                 name: player.name!,
                 accountLevel: player.level,
-                airplaneType: convertAirplaneType(player)
+                airplaneType: convertAirplaneType(player.type!)
             })
         );
 }
 
-export const extractGameStats = (url: URL, login: ServerPackets.Login): GameSnapshot => {
+export interface Player {
+    name: string;
+    accountLevel?: number;
+    airplaneType: 'predator' | 'goliath' | 'copter' | 'tornado' | 'prowler';
+}
+
+export interface LoggedInEvent {
+    url: string;
+    timestamp: number;
+    gameType: 'free-for-all' | 'capture-the-flag' | 'battle-royale' | 'development';
+    players: Player[];
+}
+
+export const transformLogin = (url: URL, login: ServerPackets.Login): LoggedInEvent => {
     return {
-        url,
-        timestamp: new Date(),
-        players: convertPlayers(login),
-        gameType: convertGameType(login)
+        url: url.toString(),
+        gameType: convertGameType(login),
+        timestamp: Date.now(),
+        players: convertPlayers(login)
     };
 };
 

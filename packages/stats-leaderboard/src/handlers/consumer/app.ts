@@ -1,20 +1,22 @@
 import {GameSnapshotRepository} from "../../storage/GameSnapshotRepository";
-import {extractGameStats} from "./extractGameStats";
-import {URL} from "url";
-import {ServerPackets} from "@airbattle/protocol";
+import {LoggedInEvent} from "../../events/LoggedInEvent";
+import {getWeek} from "date-fns";
 
 export interface AppDependencies {
     gameSnapshotRepository: GameSnapshotRepository;
 }
 
-export interface LoginEvent {
-    url: URL;
-    login:ServerPackets.Login;
-}
+export type SaveLogin = (event: LoggedInEvent) => Promise<void>;
 
-export type SaveGame = (login: LoginEvent) => Promise<void>;
+export const app = (deps: AppDependencies): SaveLogin => async (event: LoggedInEvent) => {
+    for(const player of event.players) {
+        await deps.gameSnapshotRepository.saveSnapshot({
+            airplaneType: player.airplaneType,
+            level: player.accountLevel || 0,
+            playerName: player.name,
+            snapshotTimestamp: new Date(event.timestamp).toISOString(),
+            week: getWeek(event.timestamp)
+        });
+    }
 
-export const app = (deps: AppDependencies): SaveGame => async (login: LoginEvent) => {
-    const gameStats = extractGameStats(login.url, login.login)
-    await deps.gameSnapshotRepository.saveAll([gameStats]);
 }

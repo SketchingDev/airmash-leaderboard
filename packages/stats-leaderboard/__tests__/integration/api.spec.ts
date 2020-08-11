@@ -1,160 +1,134 @@
 import {string} from "getenv";
 import {DynamoDB} from "aws-sdk";
-import {DynamoDbGameSnapshotRepository} from "../../src/storage/DynamoDbGameSnapshotRepository";
-import {URL} from "url";
-import {GameType} from "../../src/airmash/GameType";
+import {DynamoDbGameSnapshotRepository, PlayerSnapshot} from "../../src/storage/DynamoDbGameSnapshotRepository";
 import {AdaptorDependencies, httpQueryAdaptor} from "../../src/handlers/api/httpQueryAdaptor";
 import {v4} from "uuid";
-import {GameSnapshot} from "../../src/storage/GameSnapshotRepository";
 import {leaderboard, LeaderboardDependencies} from "../../src/handlers/api/leaderboard";
-import {AirplaneType} from "../../src/airmash/AirplaneType";
-import {GameUrl} from "../../src/airmash/GameUrl";
+import {addHours, getWeek} from "date-fns";
+import {APIGatewayProxyResult} from "aws-lambda/trigger/api-gateway-proxy";
 
 jest.setTimeout(10 * 100000);
 
 require('dotenv').config({path: ".env.test"});
 
 describe("API returns leaderboard from snapshot", () => {
-    let gameUrl1: GameUrl;
-    let gameUrl2: GameUrl;
-
     let gameSnapshotRepository: DynamoDbGameSnapshotRepository;
+    let deps: LeaderboardDependencies & AdaptorDependencies;
+
+    const playerNamesToCleanup: string[] = [];
+    let documentClient: DynamoDB.DocumentClient;
 
     beforeAll(() => {
+        documentClient = new DynamoDB.DocumentClient({region: "us-east-1"});
         gameSnapshotRepository = new DynamoDbGameSnapshotRepository(
-            new DynamoDB({region: "us-east-1"}),
+            documentClient,
             string("GAME_TABLE_NAME")
         );
     });
 
+    afterAll(async () => {
+        for(const playerName of playerNamesToCleanup) {
+            console.log(`Deleting ${playerName}`);
+            await documentClient.delete({
+                TableName: string("GAME_TABLE_NAME"),
+                Key: { playerName }
+            }).promise();
+        }
+    });
+
     beforeEach(() => {
-        gameUrl1 = {
-            gameType: "1",
-            name: {
-                long: "Free For All #1",
-                short: "FFA #1"
-            },
-            regionId: "eu",
-            roomId: "ffa1",
-            url: new URL(`wss://${v4()}/ffa`),
-        };
-        gameUrl2 = {
-            gameType: "1",
-            name: {
-                long: "Free For All #2",
-                short: "FFA #2"
-            },
-            regionId: "eu",
-            roomId: "ffa2",
-            url: new URL(`wss://${v4()}/ffa`),
+        deps = {
+            gameSnapshotRepository,
+            corsOrigin: "*",
+            leaderboardSize: 20,
+            minAccountLevel: 0,
+            getCurrentWeek: () => getWeek(Date.now())
         };
     })
 
     test("Leaderboard contains players from multiple game servers", async () => {
-        const snapshotOfUrl1: GameSnapshot = {
-            url: gameUrl1.url,
-            timestamp: new Date(),
-            gameType: GameType.FreeForAll,
-            players: [
-                {
-                    name: "Test Player 1",
-                    airplaneType: AirplaneType.Goliath,
-                    accountLevel: 20,
-                }
-            ]
+        const snapshotTimestamp = new Date().toISOString();
+
+        const player1Snapshot: PlayerSnapshot = {
+            playerName: v4(),
+            airplaneType: "goliath",
+            level: 50,
+            snapshotTimestamp,
+            week: getWeek(Date.now())
         };
-        const snapshotOfUrl2: GameSnapshot = {
-            url: gameUrl2.url,
-            timestamp: new Date(),
-            gameType: GameType.FreeForAll,
-            players: [
-                {
-                    name: "Test Player 2",
-                    airplaneType: AirplaneType.Goliath,
-                    accountLevel: 50,
-                }
-            ]
+        const player2Snapshot: PlayerSnapshot = {
+            playerName: v4(),
+            airplaneType: "goliath",
+            level: 50,
+            snapshotTimestamp,
+            week: getWeek(Date.now())
         };
 
-        await gameSnapshotRepository.saveAll([snapshotOfUrl1, snapshotOfUrl2]);
-
-        const deps: LeaderboardDependencies & AdaptorDependencies = {
-            gameSnapshotRepository,
-            corsOrigin: "*",
-            timespanInDays: 1,
-            leaderboardSize: 2,
-            minAccountLevel: 0,
-            gameDataLoader: async () => [gameUrl1, gameUrl2]
-        };
+        await gameSnapshotRepository.saveSnapshot(player1Snapshot);
+        await gameSnapshotRepository.saveSnapshot(player2Snapshot);
+        playerNamesToCleanup.push(...[player1Snapshot.playerName, player2Snapshot.playerName]);
 
         const response = await httpQueryAdaptor(leaderboard(deps), deps)({} as any, {} as any, {} as any);
-        expect(response).toStrictEqual({
+        expect(response).toMatchObject({
             statusCode: 200,
             headers: {
                 "Access-Control-Allow-Credentials": true,
                 "Access-Control-Allow-Origin": "*"
-            },
-            body: JSON.stringify({
-                hasError: false,
-                data: {
-                    players: [
-                        {name: "Test Player 2", level: 50},
-                        {name: "Test Player 1", level: 20}
-                    ]
-                }
-            })
+            }
+        });
+
+        const definedResponse = response as APIGatewayProxyResult;
+        const body = JSON.parse(definedResponse.body);
+        expect(body).toMatchObject({
+            hasError: false,
+            data: {
+                players: expect.arrayContaining([
+                    {name: player1Snapshot.playerName, level: 50},
+                    {name: player2Snapshot.playerName, level: 50}
+                ])
+            }
         });
     });
 
     test("Leaderboard contains a players highest account level from snapshots", async () => {
-        const snapshotOfUrl1: GameSnapshot = {
-            url: gameUrl1.url,
-            timestamp: new Date(),
-            gameType: GameType.FreeForAll,
-            players: [
-                {
-                    name: "Test Player 3",
-                    airplaneType: AirplaneType.Goliath,
-                    accountLevel: 12,
-                }
-            ]
+        const playerName = v4();
+        const playerSnapshot1: PlayerSnapshot = {
+            playerName,
+            airplaneType: "goliath",
+            level: 10,
+            snapshotTimestamp: new Date().toISOString(),
+            week: getWeek(Date.now())
         };
-        const snapshotOfUrl2: GameSnapshot = {
-            url: gameUrl2.url,
-            timestamp: new Date(),
-            gameType: GameType.FreeForAll,
-            players: [
-                {
-                    name: "Test Player 3",
-                    airplaneType: AirplaneType.Goliath,
-                    accountLevel: 13,
-                }
-            ]
+        const playerSnapshot2: PlayerSnapshot = {
+            playerName,
+            airplaneType: "predator",
+            level: 12,
+            snapshotTimestamp: addHours(new Date(), 1).toISOString(),
+            week: getWeek(Date.now())
         };
 
-        await gameSnapshotRepository.saveAll([snapshotOfUrl1, snapshotOfUrl2]);
+        await gameSnapshotRepository.saveSnapshot(playerSnapshot1);
+        await gameSnapshotRepository.saveSnapshot(playerSnapshot2);
+        playerNamesToCleanup.push(playerName);
 
-        const deps: LeaderboardDependencies = {
-            gameSnapshotRepository,
-            timespanInDays: 1,
-            leaderboardSize: 2,
-            minAccountLevel: 0,
-            gameDataLoader: async () => [gameUrl1, gameUrl2]
-        };
-
-        const response = await httpQueryAdaptor(leaderboard(deps), {corsOrigin: "*"})({} as any, {} as any, {} as any);
-        expect(response).toStrictEqual({
+        const response = await httpQueryAdaptor(leaderboard(deps), deps)({} as any, {} as any, {} as any);
+        expect(response).toMatchObject({
             statusCode: 200,
             headers: {
                 "Access-Control-Allow-Credentials": true,
                 "Access-Control-Allow-Origin": "*"
-            },
-            body: JSON.stringify({
-                hasError: false,
-                data: {
-                    players: [{name: "Test Player 3", level: 13}]
-                }
-            })
+            }
+        });
+
+        const definedResponse = response as APIGatewayProxyResult;
+        const body = JSON.parse(definedResponse.body);
+        expect(body).toMatchObject({
+            hasError: false,
+            data: {
+                players: expect.arrayContaining([
+                    {name: playerName, level: 12},
+                ])
+            }
         });
     });
 });

@@ -10,7 +10,6 @@
     "test": "jest '__tests__/(unit|integration)'",
     "test:unit": "jest '__tests__/unit'",
     "test:integration": "jest '__tests__/integration'",
-    "postinstall": "cd ../../node_modules/@airbattle/protocol/ && yarn build",
     "deploy:dev": "yarn build && sls deploy --stage dev --conceal",
     "destroy:dev": "sls remove --stage dev",
     "deploy:ci": "yarn build && sls deploy --stage ci --conceal",
@@ -20,7 +19,6 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.37",
-    "@types/axios": "^0.14.0",
     "@types/getenv": "^1.0.0",
     "@types/jest": "^24.9.1",
     "@types/node": "^13.9.1",
@@ -39,10 +37,8 @@
     "wait-for-expect": "^3.0.2"
   },
   "dependencies": {
-    "@airbattle/protocol": "github:wight-airmash/ab-protocol#master",
-    "@sketchingdev/airmash-client": "1.0.0",
-    "axios": "^0.19.2",
     "date-fns": "^2.14.0",
+    "dynamodb-toolbox": "^0.2.0-beta.1",
     "getenv": "^1.0.0",
     "serverless-iam-roles-per-function": "^2.0.2",
     "serverless-stage-manager": "^1.0.5",

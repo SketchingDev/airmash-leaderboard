@@ -46,38 +46,12 @@ describe("Produce login event", () => {
             ],
         });
 
-        const detailString = (eventBridge.putEvents.mock.calls[0][0] as any as EventBridge.Types.PutEventsRequest).Entries[0].Detail as string;
-        const detail = JSON.parse(detailString);
-
-        expect(detail).toStrictEqual({
+        const detail = (eventBridge.putEvents.mock.calls[0][0] as any as EventBridge.Types.PutEventsRequest).Entries[0].Detail as string;
+        expect(JSON.parse(detail)).toStrictEqual({
             url: "ws://127.0.0.1:3501/ffa",
-            login: {
-                bots: expect.any(Array),
-                c: 0,
-                clock: expect.any(Number),
-                id: expect.any(Number),
-                players: [
-                    {
-                        flag: 97,
-                        id: expect.any(Number),
-                        level: 0,
-                        name: playerName,
-                        posX: expect.any(Number),
-                        posY: expect.any(Number),
-                        rot: 0,
-                        status: 0,
-                        team: expect.any(Number),
-                        type: 1,
-                        upgrades: 8,
-                    },
-                ],
-                room: "ab-ffa",
-                serverConfiguration: JSON.stringify({sf: 5500, botsNamePrefix: ""}),
-                success: true,
-                team: expect.any(Number),
-                token: expect.any(String),
-                type: 1,
-            }
+            timestamp: expect.any(Number),
+            gameType: "free-for-all",
+            players: []
         });
     });
 });

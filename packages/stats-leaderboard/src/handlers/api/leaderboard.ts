@@ -1,13 +1,10 @@
-import {GameSnapshot, GameSnapshotRepository} from "../../storage/GameSnapshotRepository";
-import {GameUrl} from "../../airmash/GameUrl";
-import {subDays} from "date-fns";
+import {GameSnapshotRepository} from "../../storage/GameSnapshotRepository";
 
 export interface LeaderboardDependencies {
     gameSnapshotRepository: GameSnapshotRepository;
     leaderboardSize: number;
     minAccountLevel: number;
-    timespanInDays: number;
-    gameDataLoader: () => Promise<GameUrl[]>;
+    getCurrentWeek: () => number;
 }
 
 interface Player {
@@ -23,30 +20,14 @@ export type Leaderboard = () => Promise<FullLeaderboard>;
 
 export const leaderboard = (deps: LeaderboardDependencies): Leaderboard =>
     async (): Promise<FullLeaderboard> => {
-        const now = new Date();
-        const dateRange = { to: now, from: subDays(now, deps.timespanInDays)};
-
-        const gameUrls = await deps.gameDataLoader();
-        const snapshots: GameSnapshot[] = [];
-
-        for (const {url} of gameUrls) {
-            const gameSnapshots = await deps.gameSnapshotRepository.findByDateRange(url, dateRange);
-            snapshots.push(...gameSnapshots);
-        }
+        // TODO Two weeks worth of data
+        const snapshots = await deps.gameSnapshotRepository.findPlayerLevelsByWeek(deps.getCurrentWeek());
 
         const players = new Map<string, number>();
         for (const snapshot of snapshots) {
-            for (const player of snapshot.players) {
-                if (player.accountLevel === undefined) {
-                    continue;
-                }
-
-                const level = players.get(player.name);
-                if (level === undefined) {
-                    players.set(player.name, player.accountLevel);
-                } else if (player.accountLevel > level) {
-                    players.set(player.name, player.accountLevel);
-                }
+            const level = players.get(snapshot.playerName);
+            if (level === undefined || snapshot.level > level) {
+                players.set(snapshot.playerName, snapshot.level);
             }
         }
 

@@ -1,8 +1,7 @@
 import {AirMashConnection} from "@sketchingdev/airmash-client";
 import {GameUrl} from "./airmash/GameUrl";
 import {EventBridge} from "aws-sdk";
-import {ServerPackets} from "@airbattle/protocol";
-import {URL} from "url";
+import {LoggedInEvent, transformLogin} from "./games/transformLogin";
 
 export interface AppDependencies {
     eventBridge: EventBridge;
@@ -13,15 +12,15 @@ export interface AppDependencies {
 export type SaveGame = (gameData: GameUrl[]) => Promise<void>;
 
 export const app = (deps: AppDependencies): SaveGame => async (gameData: GameUrl[]) => {
-    const logins:{url: URL, login:ServerPackets.Login}[] = [];
+    const logins:LoggedInEvent[] = [];
 
     for(const {url} of gameData) {
-        console.log(`Trying ${url}`);
         try {
             const login = await deps.airMashConnection.partialLogin(url, deps.playerName);
-            logins.push({url, login});
+            logins.push(transformLogin(url, login));
+            console.info("Login succeeded", {url: `${url}`, players: login.players?.map(p => p.name)});
         } catch (error) {
-            console.error("Failed to partially log into server", {url, error});
+            console.warn("Login failed", {url: `${url}`, error: error.message});
         }
     }
 

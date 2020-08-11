@@ -1,18 +1,20 @@
-import {string} from "getenv";
 import {EventBridgeHandler} from "aws-lambda";
-import {DynamoDB} from "aws-sdk";
-import {app, AppDependencies, LoginEvent} from "./app";
-import {DynamoDbGameSnapshotRepository} from "../../storage/DynamoDbGameSnapshotRepository";
+import {app, AppDependencies} from "./app";
 import {eventBridgeAdaptor} from "./eventBridgeAdaptor";
+import {LoggedInEvent} from "../../events/LoggedInEvent";
+import {DynamoDbGameSnapshotRepository} from "../../storage/DynamoDbGameSnapshotRepository";
+import {DynamoDB} from "aws-sdk";
+import {string} from "getenv";
 
 const gameTableName = string("GAME_TABLE_NAME");
 const dynamoDbRegion = string('DYNAMODB_REGION', "us-east-1");
 
 const deps: AppDependencies = {
-    gameSnapshotRepository: new DynamoDbGameSnapshotRepository(
-        new DynamoDB({region: dynamoDbRegion}),
-        gameTableName
-    )
+    gameSnapshotRepository:
+        new DynamoDbGameSnapshotRepository(
+            new DynamoDB.DocumentClient({region: dynamoDbRegion}),
+            gameTableName
+        )
 }
 
-export const handler: EventBridgeHandler<"login", LoginEvent, any> = eventBridgeAdaptor(app(deps));
+export const handler: EventBridgeHandler<"login", LoggedInEvent, any> = eventBridgeAdaptor(app(deps));
