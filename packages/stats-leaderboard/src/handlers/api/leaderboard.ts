@@ -21,7 +21,7 @@ export type Leaderboard = () => Promise<FullLeaderboard>;
 export const leaderboard = (deps: LeaderboardDependencies): Leaderboard =>
     async (): Promise<FullLeaderboard> => {
         // TODO Two weeks worth of data
-        const snapshots = await deps.gameSnapshotRepository.findPlayerLevelsByWeek(deps.getCurrentWeek());
+        const snapshots = await deps.gameSnapshotRepository.findPlayerLevelsByWeek(deps.getCurrentWeek(), deps.minAccountLevel);
 
         const players = new Map<string, number>();
         for (const snapshot of snapshots) {
@@ -32,7 +32,6 @@ export const leaderboard = (deps: LeaderboardDependencies): Leaderboard =>
         }
 
         const playersWithLevelOrdered = Array.from(players)
-            .filter(([, level]) => level >= deps.minAccountLevel)
             .sort(([, levelOne], [, levelTwo]) => levelTwo - levelOne)
             .slice(0, deps.leaderboardSize);
 

@@ -11,7 +11,7 @@ jest.setTimeout(10 * 100000);
 
 require('dotenv').config({path: ".env.test"});
 
-describe("API returns leaderboard from snapshot", () => {
+describe("Leaderboard endpoint", () => {
     let gameSnapshotRepository: DynamoDbGameSnapshotRepository;
     let deps: LeaderboardDependencies & AdaptorDependencies;
 
@@ -41,10 +41,53 @@ describe("API returns leaderboard from snapshot", () => {
             gameSnapshotRepository,
             corsOrigin: "*",
             leaderboardSize: 20,
-            minAccountLevel: 0,
+            minAccountLevel: 100,
             getCurrentWeek: () => getWeek(Date.now())
         };
     })
+
+    /**
+     * I added this test and I thought partition/sort keys had to be unique. But this suggests
+     * otherwise
+     */
+    test("Can have players with same GSI keys", async () => {
+        const player1Snapshot: PlayerSnapshot = {
+            playerName: v4(),
+            airplaneType: "goliath",
+            level: 101,
+            snapshotTimestamp: new Date().toISOString(),
+            week: getWeek(Date.now())
+        };
+        const player2Snapshot = {
+            ...player1Snapshot,
+            playerName: v4()
+        }
+
+        await gameSnapshotRepository.saveSnapshot(player1Snapshot);
+        await gameSnapshotRepository.saveSnapshot(player2Snapshot);
+        playerNamesToCleanup.push(...[player1Snapshot.playerName, player2Snapshot.playerName]);
+
+        const response = await httpQueryAdaptor(leaderboard(deps), deps)({} as any, {} as any, {} as any);
+        expect(response).toMatchObject({
+            statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Credentials": true,
+                "Access-Control-Allow-Origin": "*"
+            }
+        });
+
+        const definedResponse = response as APIGatewayProxyResult;
+        const body = JSON.parse(definedResponse.body);
+        expect(body).toMatchObject({
+            hasError: false,
+            data: {
+                players: expect.arrayContaining([
+                    {name: player1Snapshot.playerName, level: 101},
+                    {name: player2Snapshot.playerName, level: 101}
+                ])
+            }
+        });
+    });
 
     test("Leaderboard contains players from multiple game servers", async () => {
         const snapshotTimestamp = new Date().toISOString();
@@ -52,14 +95,14 @@ describe("API returns leaderboard from snapshot", () => {
         const player1Snapshot: PlayerSnapshot = {
             playerName: v4(),
             airplaneType: "goliath",
-            level: 50,
+            level: 101,
             snapshotTimestamp,
             week: getWeek(Date.now())
         };
         const player2Snapshot: PlayerSnapshot = {
             playerName: v4(),
             airplaneType: "goliath",
-            level: 50,
+            level: 101,
             snapshotTimestamp,
             week: getWeek(Date.now())
         };
@@ -83,8 +126,8 @@ describe("API returns leaderboard from snapshot", () => {
             hasError: false,
             data: {
                 players: expect.arrayContaining([
-                    {name: player1Snapshot.playerName, level: 50},
-                    {name: player2Snapshot.playerName, level: 50}
+                    {name: player1Snapshot.playerName, level: 101},
+                    {name: player2Snapshot.playerName, level: 101}
                 ])
             }
         });
@@ -102,7 +145,7 @@ describe("API returns leaderboard from snapshot", () => {
         const playerSnapshot2: PlayerSnapshot = {
             playerName,
             airplaneType: "predator",
-            level: 12,
+            level: 102,
             snapshotTimestamp: addHours(new Date(), 1).toISOString(),
             week: getWeek(Date.now())
         };
@@ -126,7 +169,7 @@ describe("API returns leaderboard from snapshot", () => {
             hasError: false,
             data: {
                 players: expect.arrayContaining([
-                    {name: playerName, level: 12},
+                    {name: playerName, level: 102},
                 ])
             }
         });
