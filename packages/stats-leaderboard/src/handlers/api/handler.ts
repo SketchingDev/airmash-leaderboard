@@ -19,7 +19,7 @@ const deps: LeaderboardDependencies = {
     ),
     leaderboardSize,
     minAccountLevel,
-    getCurrentWeek: () => getWeek(Date.now())
+    getNow: () => new Date()
 }
 
 export const handler: APIGatewayProxyHandler = httpQueryAdaptor(leaderboard(deps), {corsOrigin});

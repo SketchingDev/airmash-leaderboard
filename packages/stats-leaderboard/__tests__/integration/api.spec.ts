@@ -42,7 +42,7 @@ describe("Leaderboard endpoint", () => {
             corsOrigin: "*",
             leaderboardSize: 20,
             minAccountLevel: 100,
-            getCurrentWeek: () => getWeek(Date.now())
+            getNow: () => new Date()
         };
     })
 

@@ -8,6 +8,7 @@
     "clean": "yarn rimraf ./dist",
     "build": "yarn clean && tsc -p tsconfig.build.json",
     "test": "jest '__tests__/(unit|integration)'",
+    "test:unit": "jest '__tests__/unit'",
     "test:integration": "jest '__tests__/integration'",
     "deploy:dev": "yarn build && sls deploy --stage dev --conceal",
     "destroy:dev": "sls remove --stage dev",
