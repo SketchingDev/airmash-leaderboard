@@ -21,15 +21,19 @@ provider:
 custom:
   stages:
     - dev
-    - prod
     - ci
+    - prod
+  gameDataUrl:
+    dev: https://raw.githubusercontent.com/airmash-refugees/airmash-games/master/games.txt
+    ci: http://test.test/games.txt
+    prod: https://raw.githubusercontent.com/airmash-refugees/airmash-games/master/games.txt
 
 functions:
   gameBot:
     handler: dist/handler.handler
     timeout: 40
     environment:
-      GAME_DATA_URL: https://raw.githubusercontent.com/airmash-refugees/airmash-games/master/games.txt
+      GAME_DATA_URL: ${self:custom.gameDataUrl.${self:provider.stage}}
       PLAYER_NAME: airmash-leaderboard
     events:
       - schedule: rate(1 hour)
