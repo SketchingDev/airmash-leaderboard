@@ -4,7 +4,6 @@ import {httpQueryAdaptor} from "./httpQueryAdaptor";
 import {leaderboard, LeaderboardDependencies} from "./leaderboard";
 import {DynamoDB} from "aws-sdk";
 import {DynamoDbGameSnapshotRepository} from "../../storage/DynamoDbGameSnapshotRepository";
-import {getWeek} from "date-fns";
 
 const gameTableName = string("GAME_TABLE_NAME");
 const dynamoDbRegion = string('DYNAMODB_REGION', "us-east-1");
