@@ -1,0 +1,51 @@
+{
+  "name": "@sketchingdev/stats-leaderboard",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Leaderboard stats",
+  "license": "MIT",
+  "scripts": {
+    "clean": "yarn rimraf ./dist",
+    "build": "yarn clean && tsc -p tsconfig.build.json",
+    "test": "jest '__tests__/(unit|integration)'",
+    "test:unit": "jest '__tests__/unit'",
+    "test:integration": "jest '__tests__/integration'",
+    "deploy:dev": "yarn build && sls deploy --stage dev --conceal",
+    "destroy:dev": "sls remove --stage dev",
+    "deploy:ci": "yarn build && sls deploy --stage ci --conceal",
+    "destroy:ci": "sls remove --stage ci",
+    "deploy:prod": "yarn build && sls deploy --stage prod --conceal",
+    "destroy:prod": "sls remove --stage prod"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.37",
+    "@types/getenv": "^1.0.0",
+    "@types/jest": "^24.9.1",
+    "@types/node": "^13.9.1",
+    "@types/utf8": "^2.1.6",
+    "@types/uuid": "^8.0.0",
+    "aws-sdk": "^2.706.0",
+    "dotenv": "^8.2.0",
+    "jest": "^24.9.0",
+    "rimraf": "^3.0.2",
+    "serverless": "^1.59.2",
+    "serverless-plugin-monorepo": "^0.9.0",
+    "serverless-stage-manager": "^1.0.5",
+    "ts-jest": "^25.2.1",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.9.5",
+    "wait-for-expect": "^3.0.2"
+  },
+  "dependencies": {
+    "date-fns": "^2.14.0",
+    "dynamodb-toolbox": "^0.2.0-beta.1",
+    "getenv": "^1.0.0",
+    "serverless-iam-roles-per-function": "^2.0.2",
+    "serverless-stage-manager": "^1.0.5",
+    "uuid": "^8.2.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  }
+}

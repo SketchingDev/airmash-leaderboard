@@ -1,7 +1,7 @@
 const AWS = require("aws-sdk");
 
 const region = "us-east-1";
-const stackName = "observer-bot-prod";
+const stackName = "stats-leaderboard-prod";
 
 const cloudFormation = new AWS.CloudFormation({ region, apiVersion: "2010-05-15" });
 

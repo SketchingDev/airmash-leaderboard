@@ -13,6 +13,7 @@
     "test:unit": "lerna run test:unit --stream --parallel",
     "test:integration": "lerna run test:integration --stream --parallel",
     "deploy:ci": "lerna run deploy:ci --stream",
+    "deploy:dev": "lerna run deploy:dev --stream",
     "deploy:prod": "lerna run deploy:prod --stream"
   }
 }

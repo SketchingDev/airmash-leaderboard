@@ -59,8 +59,8 @@ jobs:
       - run:
           name: Integration Test
           command: |
-            export GAME_DATA_URL=http://test.test
-            export GAME_TABLE_NAME=airmash-stats-ci-game-stats
+            export GAME_DATA_URL=http://not-used.test
+            export GAME_TABLE_NAME=airmash-leaderboard-ci-player-snapshots
             yarn test:integration
 
   deploy-ci:
