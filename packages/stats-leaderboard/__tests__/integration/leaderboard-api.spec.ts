@@ -3,7 +3,7 @@ import {DynamoDB} from "aws-sdk";
 import {DynamoDbGameSnapshotRepository, PlayerSnapshot} from "../../src/storage/DynamoDbGameSnapshotRepository";
 import {AdaptorDependencies, httpQueryAdaptor} from "../../src/handlers/api/httpQueryAdaptor";
 import {v4} from "uuid";
-import {leaderboard, LeaderboardDependencies} from "../../src/handlers/api/leaderboard";
+import {leaderboard, LeaderboardDependencies} from "../../src/handlers/api/leaderboard/leaderboard";
 import {addHours, getWeek} from "date-fns";
 import {APIGatewayProxyResult} from "aws-lambda/trigger/api-gateway-proxy";
 

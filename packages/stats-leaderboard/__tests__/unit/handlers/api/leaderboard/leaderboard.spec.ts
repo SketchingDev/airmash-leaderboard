@@ -1,6 +1,6 @@
-import {leaderboard, LeaderboardDependencies} from "../../../../src/handlers/api/leaderboard";
-import {GameSnapshotRepository} from "../../../../src/storage/GameSnapshotRepository";
-import {PlayerLevelSnapshotItem} from "../../../../src/storage/DynamoDbGameSnapshotRepository";
+import {GameSnapshotRepository} from "../../../../../src/storage/GameSnapshotRepository";
+import {PlayerLevelSnapshotItem} from "../../../../../src/storage/DynamoDbGameSnapshotRepository";
+import {leaderboard, LeaderboardDependencies} from "../../../../../src/handlers/api/leaderboard/leaderboard";
 
 describe("Leaderboard", () => {
     test("Returns players from one call even if the other fails", async () => {
@@ -15,7 +15,8 @@ describe("Leaderboard", () => {
             findPlayerLevelsByWeek: jest.fn()
                 .mockResolvedValueOnce([player])
                 .mockRejectedValueOnce(new Error("test-error-message")),
-            saveSnapshot: jest.fn()
+            saveSnapshot: jest.fn(),
+            findPlayerSnapshotsByName: jest.fn()
         }
 
         const deps: LeaderboardDependencies = {
@@ -53,7 +54,8 @@ describe("Leaderboard", () => {
             findPlayerLevelsByWeek: jest.fn()
                 .mockResolvedValueOnce([player1])
                 .mockResolvedValueOnce([player2]),
-            saveSnapshot: jest.fn()
+            saveSnapshot: jest.fn(),
+            findPlayerSnapshotsByName: jest.fn()
         }
 
         const deps: LeaderboardDependencies = {

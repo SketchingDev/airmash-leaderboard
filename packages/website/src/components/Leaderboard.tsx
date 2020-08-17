@@ -1,21 +1,19 @@
 import React, {useEffect, useState} from "react";
 import {Table} from "semantic-ui-react";
-import {LeaderboardApiClient} from "../api/LeaderboardApiClient";
-import {PlayerLeaderboard} from "../api/PlayerLeaderboard";
-// import {Link} from "react-router-dom";
+import {Link} from "react-router-dom";
+import {ApiClient, PlayerLeaderboard} from "../api/ApiClient";
 
 interface LeaderboardProps {
-    gameUrl: string | null;
-    client: LeaderboardApiClient;
+    client: ApiClient;
 }
 
-export const Leaderboard = ({gameUrl, client}: LeaderboardProps) => {
+export const Leaderboard = ({client}: LeaderboardProps) => {
     const [error, setError] = useState<string | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [leaderboard, setLeaderboard] = useState<PlayerLeaderboard | null>(null);
 
     useEffect(() => {
-        client.leaderboard(gameUrl)
+        client.leaderboard()
             .then(
                 (result) => {
                     setIsLoaded(true);
@@ -34,7 +32,7 @@ export const Leaderboard = ({gameUrl, client}: LeaderboardProps) => {
                     setError(error.message);
                 }
             )
-    }, [client, gameUrl]);
+    }, [client]);
 
     if (error) {
         return <div>Error: {error}</div>;
@@ -53,8 +51,7 @@ export const Leaderboard = ({gameUrl, client}: LeaderboardProps) => {
                 <Table.Body>
                     {leaderboard?.players.map(player => (
                         <Table.Row key={player.name}>
-                            <Table.Cell>{player.name}</Table.Cell>
-                            {/*<Table.Cell><Link to={`player/${encodeURIComponent(player.name)}`}>{player.name}</Link></Table.Cell>*/}
+                            <Table.Cell><Link to={`player/${encodeURIComponent(player.name)}`}>{player.name}</Link></Table.Cell>
                             <Table.Cell>{player.level}</Table.Cell>
                         </Table.Row>)
                     )}

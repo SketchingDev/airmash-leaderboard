@@ -1,27 +1,8 @@
 import {DynamoDB} from "aws-sdk";
-import {GameSnapshotRepository} from "./GameSnapshotRepository";
+import {GameSnapshotRepository, PlayerLevelSnapshotItem, PlayerSnapshot} from "./GameSnapshotRepository";
 import {addWeeks, getUnixTime} from "date-fns";
 
 const { Table, Entity } = require('dynamodb-toolbox');
-
-/** Snapshot of a player in time */
-export interface PlayerSnapshot {
-    playerName: string;
-    snapshotTimestamp: string; // TODO (De)Serialise
-    week: number;
-    level: number;
-    airplaneType: 'predator' | 'goliath' | 'copter' | 'tornado' | 'prowler';
-}
-
-/**
- * Snapshot focused on player levels
- */
-export interface PlayerLevelSnapshotItem {
-    playerName: string;
-    snapshotTimestamp: string;
-    week: number;
-    level: number;
-}
 
 export class DynamoDbGameSnapshotRepository implements GameSnapshotRepository {
 
@@ -99,6 +80,11 @@ export class DynamoDbGameSnapshotRepository implements GameSnapshotRepository {
             index: 'leaderboardGSI',
         });
 
+        return entities.Items;
+    }
+
+    public async findPlayerSnapshotsByName(playerName: string): Promise<PlayerSnapshot[]> {
+        const entities = await this.playerSnapshotEntity.query(playerName);
         return entities.Items;
     }
 }

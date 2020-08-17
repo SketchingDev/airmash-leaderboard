@@ -20,6 +20,10 @@ custom:
     - prod
     - ci
   playerSnapshotsTableName: airmash-leaderboard-${self:provider.stage}-player-snapshots
+  corsOrigin:
+    dev: "*"
+    ci: "*"
+    prod: "https://airmash-leaderboard.sketchingdev.co.uk"
 
 functions:
   eventsConsumer:
@@ -40,8 +44,8 @@ functions:
             detail-type:
               - login
 
-  endpoint:
-    handler: dist/handlers/api/handler.handler
+  leaderboardEndpoint:
+    handler: dist/handlers/api/leaderboard/handler.handler
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -53,6 +57,7 @@ functions:
       GAME_TABLE_NAME: ${self:custom.playerSnapshotsTableName}
       MIN_ACCOUNT_LEVEL: 3
       LEADERBOARD_SIZE: 50
+      CORS_ORIGIN: ${self:custom.corsOrigin.${self:provider.stage}}
     events:
       # TODO Enable caching https://www.serverless.com/plugins/serverless-api-gateway-caching
       - http:
@@ -62,6 +67,28 @@ functions:
             parameters:
               paths:
                 url: true
+
+  playerEndpoint:
+    handler: dist/handlers/api/player/handler.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource:
+          - { "Fn::GetAtt": [LeaderboardTable, "Arn" ] }
+          - { "Fn::Join": ['/', [Fn::GetAtt: [ LeaderboardTable, Arn ], "index/*"]] }
+    environment:
+      GAME_TABLE_NAME: ${self:custom.playerSnapshotsTableName}
+      CORS_ORIGIN: ${self:custom.corsOrigin.${self:provider.stage}}
+    events:
+      # TODO Enable caching https://www.serverless.com/plugins/serverless-api-gateway-caching
+      - http:
+          method: GET
+          path: player/{playerName}
+          request:
+            parameters:
+              paths:
+                playerName: true
 
 resources:
   Resources:

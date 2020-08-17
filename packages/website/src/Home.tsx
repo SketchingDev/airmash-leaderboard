@@ -2,12 +2,13 @@ import React from 'react';
 import './App.css';
 import {Container, Header, Message} from "semantic-ui-react";
 import {Leaderboard} from "./components/Leaderboard";
-import {LeaderboardApiClient} from "./api/LeaderboardApiClient";
+import {ApiClient} from "./api/ApiClient";
 
-const Home = () => {
-    const client = new LeaderboardApiClient(process.env.REACT_APP_API_ENDPOINT!);
-    // const [url, setUrl] = useState<string | null>(null);
+export interface HomeProps {
+    client: ApiClient;
+}
 
+const Home = ({client}: HomeProps) => {
     return (
         <div className="App">
             <Container>
@@ -31,13 +32,7 @@ const Home = () => {
                         underlying ID assigned to each player is also unique with each game.
                     </p>
                 </Message>
-                {/*<GamesDropdown onChange={({value}) => setUrl(value as string)}/>*/}
-
-                {/*<Header as='h2' content='Timeline of online players' textAlign='center'/>*/}
-                {/*<TimelineOfPlayersOnline client={client} gameUrl={url} />*/}
-
-                {/*<Header as='h2' content='7 day leaderboard' textAlign='center'/>*/}
-                <Leaderboard client={client} gameUrl={""}/>
+                <Leaderboard client={client} />
 
             </Container>
         </div>
