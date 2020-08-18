@@ -14,7 +14,7 @@ export const app = (deps: AppDependencies): SaveLogin => async (event: LoggedInE
             airplaneType: player.airplaneType,
             level: player.accountLevel || 0,
             playerName: player.name,
-            snapshotTimestamp: new Date(event.timestamp).toISOString(),
+            snapshotTimestamp: new Date(event.timestamp),
             week: getWeek(event.timestamp)
         });
     }

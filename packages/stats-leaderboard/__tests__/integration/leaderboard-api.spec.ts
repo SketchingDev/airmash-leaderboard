@@ -1,11 +1,12 @@
 import {string} from "getenv";
 import {DynamoDB} from "aws-sdk";
-import {DynamoDbGameSnapshotRepository, PlayerSnapshot} from "../../src/storage/DynamoDbGameSnapshotRepository";
+import {DynamoDbGameSnapshotRepository} from "../../src/storage/DynamoDbGameSnapshotRepository";
 import {AdaptorDependencies, httpQueryAdaptor} from "../../src/handlers/api/httpQueryAdaptor";
 import {v4} from "uuid";
 import {leaderboard, LeaderboardDependencies} from "../../src/handlers/api/leaderboard/leaderboard";
 import {addHours, getWeek} from "date-fns";
 import {APIGatewayProxyResult} from "aws-lambda/trigger/api-gateway-proxy";
+import {PlayerSnapshot} from "../../src/storage/GameSnapshotRepository";
 
 jest.setTimeout(10 * 100000);
 
@@ -40,7 +41,7 @@ describe("Leaderboard endpoint", () => {
         deps = {
             gameSnapshotRepository,
             corsOrigin: "*",
-            leaderboardSize: 20,
+            leaderboardSize: 50,
             minAccountLevel: 100,
             getNow: () => new Date()
         };
@@ -55,7 +56,7 @@ describe("Leaderboard endpoint", () => {
             playerName: v4(),
             airplaneType: "goliath",
             level: 101,
-            snapshotTimestamp: new Date().toISOString(),
+            snapshotTimestamp: new Date(),
             week: getWeek(Date.now())
         };
         const player2Snapshot = {
@@ -90,7 +91,7 @@ describe("Leaderboard endpoint", () => {
     });
 
     test("Leaderboard contains players from multiple game servers", async () => {
-        const snapshotTimestamp = new Date().toISOString();
+        const snapshotTimestamp = new Date();
 
         const player1Snapshot: PlayerSnapshot = {
             playerName: v4(),
@@ -139,14 +140,14 @@ describe("Leaderboard endpoint", () => {
             playerName,
             airplaneType: "goliath",
             level: 10,
-            snapshotTimestamp: new Date().toISOString(),
+            snapshotTimestamp: new Date(),
             week: getWeek(Date.now())
         };
         const playerSnapshot2: PlayerSnapshot = {
             playerName,
             airplaneType: "predator",
             level: 102,
-            snapshotTimestamp: addHours(new Date(), 1).toISOString(),
+            snapshotTimestamp: addHours(new Date(), 1),
             week: getWeek(Date.now())
         };
 

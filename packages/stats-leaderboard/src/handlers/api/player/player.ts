@@ -31,6 +31,23 @@ const mode = (planes: PlayerSnapshot["airplaneType"][]) =>
 
 export type Player = (parameters: { [p: string]: string }) => Promise<PlayerMetrics>;
 
+
+const daysSeenOnline = (snapshots: PlayerSnapshot[]) => {
+    const dates = snapshots.map(s => format(
+        new Date(s.snapshotTimestamp),
+        'dd/MM/yyyy'
+    ));
+
+    return Array.from(new Set(dates))
+}
+
+const currentLevel = (snapshots: PlayerSnapshot[]) =>
+     snapshots.reduce((prev, current) => (prev.level > current.level) ? prev : current).level;
+
+const lastSeenOnline = (snapshots: PlayerSnapshot[]) => max(snapshots.map(s => new Date(s.snapshotTimestamp)));
+const planeSeenTheMost = (snapshots: PlayerSnapshot[]) => mode(snapshots.map(s => s.airplaneType));
+
+
 export const player = ({gameSnapshotRepository}: PlayerMetricsDependencies): Player =>
     async (parameters: { [p: string]: string }): Promise<PlayerMetrics> => {
         if (parameters.playerName === undefined) {
@@ -43,19 +60,14 @@ export const player = ({gameSnapshotRepository}: PlayerMetricsDependencies): Pla
             return {playerFound: false};
         }
 
-        const daysSeenOnlineSet = new Set(snapshots.map(s => format(
-            new Date(s.snapshotTimestamp),
-            'dd/MM/yyyy'
-        )));
-
         return {
             playerFound: true,
             metrics: {
                 name: playerName,
-                level: snapshots.reduce((prev, current) => (prev.level > current.level) ? prev : current).level,
-                lastSeenOnline: max(snapshots.map(s => new Date(s.snapshotTimestamp))),
-                daysSeenOnline: Array.from(daysSeenOnlineSet),
-                planeSeenTheMost: mode(snapshots.map(s => s.airplaneType))
+                level: currentLevel(snapshots),
+                lastSeenOnline: lastSeenOnline(snapshots),
+                daysSeenOnline: daysSeenOnline(snapshots),
+                planeSeenTheMost: planeSeenTheMost(snapshots)
             }
         }
     };

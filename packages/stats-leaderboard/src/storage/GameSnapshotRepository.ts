@@ -1,7 +1,7 @@
 /** Snapshot of a player in time */
 export interface PlayerSnapshot {
     playerName: string;
-    snapshotTimestamp: string; // TODO (De)Serialise
+    snapshotTimestamp: Date;
     week: number;
     level: number;
     airplaneType: 'predator' | 'goliath' | 'copter' | 'tornado' | 'prowler';
@@ -12,7 +12,7 @@ export interface PlayerSnapshot {
  */
 export interface PlayerLevelSnapshotItem {
     playerName: string;
-    snapshotTimestamp: string;
+    snapshotTimestamp: Date;
     week: number;
     level: number;
 }

@@ -40,7 +40,7 @@ export const Leaderboard = ({client}: LeaderboardProps) => {
         return <div>Loading...</div>;
     } else {
         return (
-            <Table celled striped inverted>
+            <Table celled inverted>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Name</Table.HeaderCell>

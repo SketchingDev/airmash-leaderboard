@@ -29,13 +29,12 @@ export const leaderboard = (deps: LeaderboardDependencies): Leaderboard =>
 
         const snapshots: PlayerLevelSnapshotItem[] = [];
         try {
-
             snapshots.push(...await deps.gameSnapshotRepository.findPlayerLevelsByWeek(getWeek(dateRange.from), deps.minAccountLevel));
         } catch (error) {
             console.warn("Failed to get this week's snapshots", {error: error.message});
         }
-        try {
 
+        try {
             snapshots.push(...await deps.gameSnapshotRepository.findPlayerLevelsByWeek(getWeek(dateRange.to), deps.minAccountLevel));
         } catch (error) {
             console.warn("Failed to get last week's snapshots", {error: error.message});

@@ -1,10 +1,11 @@
 import {string} from "getenv";
 import {DynamoDB} from "aws-sdk";
-import {DynamoDbGameSnapshotRepository, PlayerSnapshot} from "../../src/storage/DynamoDbGameSnapshotRepository";
+import {DynamoDbGameSnapshotRepository} from "../../src/storage/DynamoDbGameSnapshotRepository";
 import {AdaptorDependencies, httpQueryAdaptor} from "../../src/handlers/api/httpQueryAdaptor";
 import {v4} from "uuid";
 import {player, PlayerMetricsDependencies} from "../../src/handlers/api/player/player";
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from "aws-lambda/trigger/api-gateway-proxy";
+import {PlayerSnapshot} from "../../src/storage/GameSnapshotRepository";
 
 jest.setTimeout(10 * 100000);
 
@@ -48,14 +49,14 @@ describe("Player endpoint", () => {
             playerName,
             airplaneType: "goliath",
             level: 1,
-            snapshotTimestamp: "2020-08-14T20:25:04.704Z",
+            snapshotTimestamp: new Date("2020-08-14T20:25:04.704Z"),
             week: 22
         };
         const playerSnapshot2: PlayerSnapshot = {
             playerName,
             airplaneType: "goliath",
             level: 2,
-            snapshotTimestamp: "2020-08-15T20:25:04.704Z",
+            snapshotTimestamp: new Date("2020-08-15T20:25:04.704Z"),
             week: 22
         }
 
@@ -83,7 +84,7 @@ describe("Player endpoint", () => {
                 metrics: {
                     name: playerName,
                     level: 2,
-                    lastSeenOnline: playerSnapshot2.snapshotTimestamp,
+                    lastSeenOnline: playerSnapshot2.snapshotTimestamp.toISOString(),
                 }
             }
         });
@@ -96,21 +97,21 @@ describe("Player endpoint", () => {
             airplaneType: "goliath",
             level: 1,
             week: 22,
-            snapshotTimestamp: "2020-08-14T20:25:04.704Z"
+            snapshotTimestamp: new Date("2020-08-14T20:25:04.704Z")
         };
         const playerSnapshot2: PlayerSnapshot = {
             playerName,
             airplaneType: "goliath",
             level: 2,
             week: 22,
-            snapshotTimestamp: "2020-08-15T20:25:04.704Z"
+            snapshotTimestamp: new Date("2020-08-15T20:25:04.704Z")
         }
         const playerSnapshot3: PlayerSnapshot = {
             playerName,
             airplaneType: "goliath",
             level: 2,
             week: 22,
-            snapshotTimestamp: "2020-08-15T20:40:04.704Z"
+            snapshotTimestamp: new Date("2020-08-15T20:40:04.704Z")
         }
 
         await gameSnapshotRepository.saveSnapshot(playerSnapshot1);
@@ -152,21 +153,21 @@ describe("Player endpoint", () => {
             airplaneType: "predator",
             level: 1,
             week: 22,
-            snapshotTimestamp: "2020-08-14T20:25:04.704Z"
+            snapshotTimestamp: new Date("2020-08-14T20:25:04.704Z")
         };
         const playerSnapshot2: PlayerSnapshot = {
             playerName,
             airplaneType: "predator",
             level: 2,
             week: 22,
-            snapshotTimestamp: "2020-08-15T20:25:04.704Z"
+            snapshotTimestamp: new Date("2020-08-15T20:25:04.704Z")
         }
         const playerSnapshot3: PlayerSnapshot = {
             playerName,
             airplaneType: "goliath",
             level: 2,
             week: 22,
-            snapshotTimestamp: "2020-08-15T20:40:04.704Z"
+            snapshotTimestamp: new Date("2020-08-15T20:40:04.704Z")
         }
 
         await gameSnapshotRepository.saveSnapshot(playerSnapshot1);

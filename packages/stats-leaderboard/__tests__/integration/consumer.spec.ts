@@ -72,7 +72,7 @@ describe("Take snapshots of Games", () => {
             [{
                 level: playerLevel,
                 playerName: playerName,
-                snapshotTimestamp: expect.any(String),
+                snapshotTimestamp: expect.any(Date),
                 week: `${getWeek(Date.now())}`
             }]
         ));
