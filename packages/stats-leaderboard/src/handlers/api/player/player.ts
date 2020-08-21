@@ -1,5 +1,5 @@
 import {GameSnapshotRepository, PlayerSnapshot} from "../../../storage/GameSnapshotRepository";
-import {format, max} from "date-fns";
+import {formatISO, max} from "date-fns";
 
 export interface PlayerMetricsDependencies {
     gameSnapshotRepository: GameSnapshotRepository;
@@ -32,17 +32,16 @@ const mode = (planes: PlayerSnapshot["airplaneType"][]) =>
 export type Player = (parameters: { [p: string]: string }) => Promise<PlayerMetrics>;
 
 
-const daysSeenOnline = (snapshots: PlayerSnapshot[]) => {
-    const dates = snapshots.map(s => format(
-        new Date(s.snapshotTimestamp),
-        'dd/MM/yyyy'
-    ));
+const daysSeenOnline = (snapshots: PlayerSnapshot[]): string[] => {
+    const dates = snapshots.map(
+        s => formatISO(s.snapshotTimestamp, { representation: 'date' })
+    );
 
     return Array.from(new Set(dates))
 }
 
 const currentLevel = (snapshots: PlayerSnapshot[]) =>
-     snapshots.reduce((prev, current) => (prev.level > current.level) ? prev : current).level;
+    snapshots.reduce((prev, current) => (prev.level > current.level) ? prev : current).level;
 
 const lastSeenOnline = (snapshots: PlayerSnapshot[]) => max(snapshots.map(s => new Date(s.snapshotTimestamp)));
 const planeSeenTheMost = (snapshots: PlayerSnapshot[]) => mode(snapshots.map(s => s.airplaneType));

@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import '../App.css';
-import {Container, Header, Image} from "semantic-ui-react";
+import {Container, Divider, Header, Image} from "semantic-ui-react";
 import {useParams} from 'react-router-dom';
 import {ApiClient, PlayerMetrics} from "../api/ApiClient";
-import {formatDistanceToNow} from 'date-fns';
+import {formatDistanceToNow, subWeeks} from 'date-fns';
 import {ResponsiveCalendar} from '@nivo/calendar'
 
 const planes = {
@@ -55,9 +55,11 @@ const Player = ({client}: PlayerProps) => {
     } else {
         return (
             <div className="App">
+                {/*<Divider fitted/>*/}
+
                 <Container style={{ height: 200 }}>
                     <Header as='h2' icon textAlign='center'>
-                        <Image src={planes[playerMetrics.metrics.planeSeenTheMost || "prowler"]} size='medium'
+                        <Image src={planes[playerMetrics.metrics.planeSeenTheMost || "prowler"]} size='big'
                                circular/>
                         <Header.Content>{name}</Header.Content>
                     </Header>
@@ -67,11 +69,11 @@ const Player = ({client}: PlayerProps) => {
                     <p>Last seen {formatDistanceToNow(new Date(playerMetrics.metrics.lastSeenOnline))} ago</p>
 
                     <ResponsiveCalendar
-                        data={[{day: "2020-03-02", value: 123}]}
-                        from="2020-03-01"
-                        to="2020-07-12"
-                        emptyColor="#eeeeee"
-                        colors={[ '#61cdbb', '#97e3d5', '#e8c1a0', '#f47560' ]}
+                        data={playerMetrics.metrics.daysSeenOnline.map(s => ({day: s, value: 0}))}
+                        from={subWeeks(new Date(), 2)}
+                        to={new Date()}
+                        emptyColor='#eeeeee'
+                        colors={[ '#61cdbb' ]}
                         margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
                         yearSpacing={40}
                         yearLegendOffset={14}

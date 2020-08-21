@@ -15,7 +15,7 @@ describe("Player endpoint", () => {
     let gameSnapshotRepository: DynamoDbGameSnapshotRepository;
     let deps: AdaptorDependencies & PlayerMetricsDependencies;
 
-    const playerNamesToCleanup: string[] = [];
+    const playersToCleanup: PlayerSnapshot[] = [];
     let documentClient: DynamoDB.DocumentClient;
 
     beforeAll(() => {
@@ -27,12 +27,19 @@ describe("Player endpoint", () => {
     });
 
     afterAll(async () => {
-        for (const playerName of playerNamesToCleanup) {
-            console.log(`Deleting ${playerName}`);
-            await documentClient.delete({
-                TableName: string("GAME_TABLE_NAME"),
-                Key: {playerName}
-            }).promise();
+        for (const player of playersToCleanup) {
+            console.log(`Deleting ${player.playerName}`);
+            try {
+                await documentClient.delete({
+                    TableName: string("GAME_TABLE_NAME"),
+                    Key: {
+                        playerName: player.playerName,
+                        snapshotTimestamp: player.snapshotTimestamp.toISOString(),
+                    }
+                }).promise();
+            } catch (err) {
+                console.error(err);
+            }
         }
     });
 
@@ -62,7 +69,7 @@ describe("Player endpoint", () => {
 
         await gameSnapshotRepository.saveSnapshot(playerSnapshot1);
         await gameSnapshotRepository.saveSnapshot(playerSnapshot2);
-        playerNamesToCleanup.push(playerName);
+        playersToCleanup.push(...[playerSnapshot1, playerSnapshot2]);
 
         const event: Partial<APIGatewayProxyEvent> = {pathParameters: {playerName}};
 
@@ -117,7 +124,7 @@ describe("Player endpoint", () => {
         await gameSnapshotRepository.saveSnapshot(playerSnapshot1);
         await gameSnapshotRepository.saveSnapshot(playerSnapshot2);
         await gameSnapshotRepository.saveSnapshot(playerSnapshot3);
-        playerNamesToCleanup.push(playerName);
+        playersToCleanup.push(...[playerSnapshot1, playerSnapshot2, playerSnapshot3]);
 
         const event: Partial<APIGatewayProxyEvent> = {pathParameters: {playerName}};
 
@@ -138,8 +145,8 @@ describe("Player endpoint", () => {
                 playerFound: true,
                 metrics: {
                     daysSeenOnline: [
-                        "14/08/2020",
-                        "15/08/2020",
+                        "2020-08-14",
+                        "2020-08-15"
                     ]
                 }
             }
@@ -173,7 +180,7 @@ describe("Player endpoint", () => {
         await gameSnapshotRepository.saveSnapshot(playerSnapshot1);
         await gameSnapshotRepository.saveSnapshot(playerSnapshot2);
         await gameSnapshotRepository.saveSnapshot(playerSnapshot3);
-        playerNamesToCleanup.push(playerName);
+        playersToCleanup.push(...[playerSnapshot1, playerSnapshot2, playerSnapshot3]);
 
         const event: Partial<APIGatewayProxyEvent> = {pathParameters: {playerName}};
 

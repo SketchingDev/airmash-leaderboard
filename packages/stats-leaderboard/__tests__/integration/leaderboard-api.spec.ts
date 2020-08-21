@@ -16,7 +16,7 @@ describe("Leaderboard endpoint", () => {
     let gameSnapshotRepository: DynamoDbGameSnapshotRepository;
     let deps: LeaderboardDependencies & AdaptorDependencies;
 
-    const playerNamesToCleanup: string[] = [];
+    const playersToCleanup: PlayerSnapshot[] = [];
     let documentClient: DynamoDB.DocumentClient;
 
     beforeAll(() => {
@@ -28,12 +28,19 @@ describe("Leaderboard endpoint", () => {
     });
 
     afterAll(async () => {
-        for(const playerName of playerNamesToCleanup) {
-            console.log(`Deleting ${playerName}`);
-            await documentClient.delete({
-                TableName: string("GAME_TABLE_NAME"),
-                Key: { playerName }
-            }).promise();
+        for (const player of playersToCleanup) {
+            console.log(`Deleting ${player.playerName}`);
+            try {
+                await documentClient.delete({
+                    TableName: string("GAME_TABLE_NAME"),
+                    Key: {
+                        playerName: player.playerName,
+                        snapshotTimestamp: player.snapshotTimestamp.toISOString(),
+                    }
+                }).promise();
+            } catch (err) {
+                console.error(err);
+            }
         }
     });
 
@@ -66,7 +73,7 @@ describe("Leaderboard endpoint", () => {
 
         await gameSnapshotRepository.saveSnapshot(player1Snapshot);
         await gameSnapshotRepository.saveSnapshot(player2Snapshot);
-        playerNamesToCleanup.push(...[player1Snapshot.playerName, player2Snapshot.playerName]);
+        playersToCleanup.push(...[player1Snapshot, player2Snapshot]);
 
         const response = await httpQueryAdaptor(leaderboard(deps), deps)({} as any, {} as any, {} as any);
         expect(response).toMatchObject({
@@ -110,7 +117,7 @@ describe("Leaderboard endpoint", () => {
 
         await gameSnapshotRepository.saveSnapshot(player1Snapshot);
         await gameSnapshotRepository.saveSnapshot(player2Snapshot);
-        playerNamesToCleanup.push(...[player1Snapshot.playerName, player2Snapshot.playerName]);
+        playersToCleanup.push(...[player1Snapshot, player2Snapshot]);
 
         const response = await httpQueryAdaptor(leaderboard(deps), deps)({} as any, {} as any, {} as any);
         expect(response).toMatchObject({
@@ -153,7 +160,7 @@ describe("Leaderboard endpoint", () => {
 
         await gameSnapshotRepository.saveSnapshot(playerSnapshot1);
         await gameSnapshotRepository.saveSnapshot(playerSnapshot2);
-        playerNamesToCleanup.push(playerName);
+        playersToCleanup.push(...[playerSnapshot1, playerSnapshot2]);
 
         const response = await httpQueryAdaptor(leaderboard(deps), deps)({} as any, {} as any, {} as any);
         expect(response).toMatchObject({
