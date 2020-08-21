@@ -1,6 +1,5 @@
-import {GameSnapshotRepository} from "../../storage/GameSnapshotRepository";
-import {getWeek, subWeeks} from "date-fns";
-import {PlayerLevelSnapshotItem} from "../../storage/DynamoDbGameSnapshotRepository";
+import {GameSnapshotRepository, PlayerLevelSnapshotItem} from "../../../storage/GameSnapshotRepository";
+import {endOfWeek, getWeek, startOfWeek, subWeeks} from "date-fns";
 
 export interface LeaderboardDependencies {
     gameSnapshotRepository: GameSnapshotRepository;
@@ -16,22 +15,27 @@ interface Player {
 
 interface FullLeaderboard {
     players: Player[];
+    dateRange: {from: Date; to: Date};
 }
 
 export type Leaderboard = () => Promise<FullLeaderboard>;
 
 export const leaderboard = (deps: LeaderboardDependencies): Leaderboard =>
     async (): Promise<FullLeaderboard> => {
+        const dateRange = {
+            from: startOfWeek(subWeeks(deps.getNow(), 1)),
+            to: endOfWeek(deps.getNow())
+        }
+
         const snapshots: PlayerLevelSnapshotItem[] = [];
         try {
-            const thisWeek = getWeek(deps.getNow());
-            snapshots.push(...await deps.gameSnapshotRepository.findPlayerLevelsByWeek(thisWeek, deps.minAccountLevel));
+            snapshots.push(...await deps.gameSnapshotRepository.findPlayerLevelsByWeek(getWeek(dateRange.from), deps.minAccountLevel));
         } catch (error) {
             console.warn("Failed to get this week's snapshots", {error: error.message});
         }
+
         try {
-            const lastWeek = getWeek(subWeeks(deps.getNow(), 1));
-            snapshots.push(...await deps.gameSnapshotRepository.findPlayerLevelsByWeek(lastWeek, deps.minAccountLevel));
+            snapshots.push(...await deps.gameSnapshotRepository.findPlayerLevelsByWeek(getWeek(dateRange.to), deps.minAccountLevel));
         } catch (error) {
             console.warn("Failed to get last week's snapshots", {error: error.message});
         }
@@ -49,6 +53,7 @@ export const leaderboard = (deps: LeaderboardDependencies): Leaderboard =>
             .slice(0, deps.leaderboardSize);
 
         return {
+            dateRange,
             players: playersWithLevelOrdered.map(([name, level]) => ({
                 name,
                 level

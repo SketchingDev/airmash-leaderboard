@@ -1,13 +1,12 @@
-import {leaderboard, LeaderboardDependencies} from "../../../../src/handlers/api/leaderboard";
-import {GameSnapshotRepository} from "../../../../src/storage/GameSnapshotRepository";
-import {PlayerLevelSnapshotItem} from "../../../../src/storage/DynamoDbGameSnapshotRepository";
+import {GameSnapshotRepository, PlayerLevelSnapshotItem} from "../../../../../src/storage/GameSnapshotRepository";
+import {leaderboard, LeaderboardDependencies} from "../../../../../src/handlers/api/leaderboard/leaderboard";
 
 describe("Leaderboard", () => {
     test("Returns players from one call even if the other fails", async () => {
         const player: PlayerLevelSnapshotItem = {
             level: 0,
             playerName: "test-player",
-            snapshotTimestamp: "",
+            snapshotTimestamp: new Date(),
             week: 0
         }
 
@@ -15,7 +14,8 @@ describe("Leaderboard", () => {
             findPlayerLevelsByWeek: jest.fn()
                 .mockResolvedValueOnce([player])
                 .mockRejectedValueOnce(new Error("test-error-message")),
-            saveSnapshot: jest.fn()
+            saveSnapshot: jest.fn(),
+            findPlayerSnapshotsByName: jest.fn()
         }
 
         const deps: LeaderboardDependencies = {
@@ -26,6 +26,10 @@ describe("Leaderboard", () => {
         }
 
         expect(await leaderboard(deps)()).toStrictEqual({
+            dateRange: {
+                from: expect.any(Date),
+                to: expect.any(Date),
+            },
             players: [
                 {
                     name: "test-player",
@@ -39,13 +43,13 @@ describe("Leaderboard", () => {
         const player1: PlayerLevelSnapshotItem = {
             level: 0,
             playerName: "test-player-1",
-            snapshotTimestamp: "",
+            snapshotTimestamp: new Date(),
             week: 0
         }
         const player2: PlayerLevelSnapshotItem = {
             level: 0,
             playerName: "test-player-2",
-            snapshotTimestamp: "",
+            snapshotTimestamp: new Date(),
             week: 0
         }
 
@@ -53,7 +57,8 @@ describe("Leaderboard", () => {
             findPlayerLevelsByWeek: jest.fn()
                 .mockResolvedValueOnce([player1])
                 .mockResolvedValueOnce([player2]),
-            saveSnapshot: jest.fn()
+            saveSnapshot: jest.fn(),
+            findPlayerSnapshotsByName: jest.fn()
         }
 
         const deps: LeaderboardDependencies = {
@@ -65,6 +70,10 @@ describe("Leaderboard", () => {
 
         expect(await leaderboard(deps)()).toStrictEqual(
             {
+                dateRange: {
+                    from: expect.any(Date),
+                    to: expect.any(Date),
+                },
                 players: [
                     {
                         name: "test-player-1",

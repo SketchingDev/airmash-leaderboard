@@ -1,27 +1,8 @@
 import {DynamoDB} from "aws-sdk";
-import {GameSnapshotRepository} from "./GameSnapshotRepository";
+import {GameSnapshotRepository, PlayerLevelSnapshotItem, PlayerSnapshot} from "./GameSnapshotRepository";
 import {addWeeks, getUnixTime} from "date-fns";
 
 const { Table, Entity } = require('dynamodb-toolbox');
-
-/** Snapshot of a player in time */
-export interface PlayerSnapshot {
-    playerName: string;
-    snapshotTimestamp: string; // TODO (De)Serialise
-    week: number;
-    level: number;
-    airplaneType: 'predator' | 'goliath' | 'copter' | 'tornado' | 'prowler';
-}
-
-/**
- * Snapshot focused on player levels
- */
-export interface PlayerLevelSnapshotItem {
-    playerName: string;
-    snapshotTimestamp: string;
-    week: number;
-    level: number;
-}
 
 export class DynamoDbGameSnapshotRepository implements GameSnapshotRepository {
 
@@ -51,7 +32,7 @@ export class DynamoDbGameSnapshotRepository implements GameSnapshotRepository {
             name: 'PlayerSnapshot',
             attributes: {
                 playerName: {type: 'string', partitionKey: true},
-                snapshotTimestamp: {type: 'string', sortKey: true}, // default: () => new Date().toISOString()
+                snapshotTimestamp: {type: 'string', sortKey: true},
                 week: {type: 'string'},
                 level: {type: 'number'},
                 airplaneType: {type: 'string'},
@@ -84,7 +65,10 @@ export class DynamoDbGameSnapshotRepository implements GameSnapshotRepository {
     }
 
     public async saveSnapshot(snapshot: PlayerSnapshot): Promise<void> {
-        await this.playerSnapshotEntity.put(snapshot);
+        await this.playerSnapshotEntity.put({
+            ...snapshot,
+            snapshotTimestamp: snapshot.snapshotTimestamp.toISOString()
+        });
     }
 
     /**
@@ -94,11 +78,20 @@ export class DynamoDbGameSnapshotRepository implements GameSnapshotRepository {
     public async findPlayerLevelsByWeek(week: number, minLevel = 2): Promise<PlayerLevelSnapshotItem[]> {
         const entities = await this.leaderboardEntity.query(`${week}`, {
             gte: minLevel,
-            // reverse: true, // return items in descending order (newest first)
-            // capacity: 'indexes', // return the total capacity consumed by the indexes
             index: 'leaderboardGSI',
         });
 
-        return entities.Items;
+        return entities.Items.map((item: any) => ({
+            ...item,
+            snapshotTimestamp: new Date(item.snapshotTimestamp)
+        }));
+    }
+
+    public async findPlayerSnapshotsByName(playerName: string): Promise<PlayerSnapshot[]> {
+        const entities = await this.playerSnapshotEntity.query(playerName);
+        return entities.Items.map((item: any) => ({
+            ...item,
+            snapshotTimestamp: new Date(item.snapshotTimestamp)
+        }));
     }
 }

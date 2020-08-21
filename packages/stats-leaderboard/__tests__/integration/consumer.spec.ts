@@ -6,7 +6,7 @@ import {eventBridgeAdaptor} from "../../src/handlers/consumer/eventBridgeAdaptor
 import {EventBridgeEvent} from "aws-lambda";
 import {v4} from "uuid";
 import {getWeek} from "date-fns";
-import {LoggedInEvent} from "../../src/events/LoggedInEvent";
+import {LoggedInEvent, Player} from "../../src/events/LoggedInEvent";
 
 jest.setTimeout(10 * 100000);
 
@@ -16,7 +16,7 @@ describe("Take snapshots of Games", () => {
     let gameSnapshotRepository: DynamoDbGameSnapshotRepository;
 
     let documentClient: DynamoDB.DocumentClient;
-    const playerNamesToCleanup: string[] = [];
+    const playersToCleanup: {playerName: string, snapshotTimestamp: Date}[] = [];
 
     beforeAll(() => {
         documentClient = new DynamoDB.DocumentClient({region: "us-east-1"});
@@ -27,18 +27,28 @@ describe("Take snapshots of Games", () => {
     });
 
     afterAll(async () => {
-        for (const playerName of playerNamesToCleanup) {
-            console.log(`Deleting ${playerName}`);
-            await documentClient.delete({
-                TableName: string("GAME_TABLE_NAME"),
-                Key: {playerName}
-            }).promise();
+        for (const player of playersToCleanup) {
+            console.log(`Deleting ${player.playerName}`);
+            try {
+                await documentClient.delete({
+                    TableName: string("GAME_TABLE_NAME"),
+                    Key: {
+                        playerName: player.playerName,
+                        snapshotTimestamp: player.snapshotTimestamp.toISOString(),
+                    }
+                }).promise();
+            } catch (err) {
+                console.error(err);
+            }
         }
     });
 
     test("Snapshot of games saved to DynamoDB", async () => {
-        const playerName = v4();
-        const playerLevel = 4;
+        const player: Player = {
+            name: v4(),
+            accountLevel: 4,
+            airplaneType:  "predator"
+        }
 
         const event: EventBridgeEvent<"login", LoggedInEvent> = {
             version: "0",
@@ -53,16 +63,10 @@ describe("Take snapshots of Games", () => {
                 url: `wss://${v4()}/ffa`,
                 timestamp: Date.now(),
                 gameType: "free-for-all",
-                players: [
-                    {
-                        name: playerName,
-                        accountLevel: playerLevel,
-                        airplaneType:  "predator"
-                    }
-                ]
+                players: [player]
             }
         };
-        playerNamesToCleanup.push(playerName);
+        playersToCleanup.push({playerName: player.name, snapshotTimestamp: new Date(event.detail.timestamp)});
 
         const deps: AppDependencies = {gameSnapshotRepository};
         await eventBridgeAdaptor(app(deps))(event, {} as any, jest.fn());
@@ -70,9 +74,9 @@ describe("Take snapshots of Games", () => {
         const snapshots = await gameSnapshotRepository.findPlayerLevelsByWeek(getWeek(Date.now()));
         expect(snapshots).toMatchObject(expect.arrayContaining(
             [{
-                level: playerLevel,
-                playerName: playerName,
-                snapshotTimestamp: expect.any(String),
+                level: player.accountLevel,
+                playerName: player.name,
+                snapshotTimestamp: expect.any(Date),
                 week: `${getWeek(Date.now())}`
             }]
         ));

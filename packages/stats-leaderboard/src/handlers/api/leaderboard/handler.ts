@@ -1,9 +1,9 @@
 import {int, string} from "getenv";
 import {APIGatewayProxyHandler} from "aws-lambda";
-import {httpQueryAdaptor} from "./httpQueryAdaptor";
+import {httpQueryAdaptor} from "../httpQueryAdaptor";
 import {leaderboard, LeaderboardDependencies} from "./leaderboard";
 import {DynamoDB} from "aws-sdk";
-import {DynamoDbGameSnapshotRepository} from "../../storage/DynamoDbGameSnapshotRepository";
+import {DynamoDbGameSnapshotRepository} from "../../../storage/DynamoDbGameSnapshotRepository";
 
 const gameTableName = string("GAME_TABLE_NAME");
 const dynamoDbRegion = string('DYNAMODB_REGION', "us-east-1");

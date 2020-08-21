@@ -12,10 +12,12 @@
     "test:integration": "jest '__tests__/integration'",
     "deploy:dev": "yarn build && sls deploy --stage dev --conceal",
     "destroy:dev": "sls remove --stage dev",
+    "monitor:dev": "sls-dev-tools --region us-east-1 --sls -s dev",
     "deploy:ci": "yarn build && sls deploy --stage ci --conceal",
     "destroy:ci": "sls remove --stage ci",
     "deploy:prod": "yarn build && sls deploy --stage prod --conceal",
-    "destroy:prod": "sls remove --stage prod"
+    "destroy:prod": "sls remove --stage prod",
+    "monitor:prod": "sls-dev-tools --region us-east-1 --sls -s prod"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.37",
@@ -31,7 +33,8 @@
     "serverless": "^1.59.2",
     "serverless-plugin-monorepo": "^0.9.0",
     "serverless-stage-manager": "^1.0.5",
-    "ts-jest": "^25.2.1",
+    "sls-dev-tools": "^1.1.8",
+    "ts-jest": "^24.3.0",
     "ts-loader": "^6.2.1",
     "typescript": "^3.9.5",
     "wait-for-expect": "^3.0.2"
