@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.css';
-import {Divider, Header, Icon, Message} from "semantic-ui-react";
 import {Leaderboard} from "./components/Leaderboard";
 import {ApiClient} from "./api/ApiClient";
 

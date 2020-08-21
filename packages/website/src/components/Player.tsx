@@ -1,17 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import '../App.css';
-import {Container, Divider, Header, Image} from "semantic-ui-react";
+import {Container, Header, Image} from "semantic-ui-react";
 import {useParams} from 'react-router-dom';
 import {ApiClient, PlayerMetrics} from "../api/ApiClient";
 import {formatDistanceToNow, subWeeks} from 'date-fns';
 import {ResponsiveCalendar} from '@nivo/calendar'
 
 const planes = {
-    predator: '/planes/raptor.png',
+    predator: '/planes/predator.png',
     goliath: '/planes/goliath.png',
     tornado: '/planes/tornado.png',
     prowler: '/planes/prowler.png',
-    copter: '/planes/tornado.png',
+    copter: '/planes/mohawk.png',
 }
 
 export interface PlayerProps {
@@ -55,12 +55,11 @@ const Player = ({client}: PlayerProps) => {
     } else {
         return (
             <div className="App">
-                {/*<Divider fitted/>*/}
-
                 <Container style={{ height: 200 }}>
+                    <Image src={planes[playerMetrics.metrics.planeSeenTheMost || "prowler"]}
+                           size='small'
+                           circular centered={true}/>
                     <Header as='h2' icon textAlign='center'>
-                        <Image src={planes[playerMetrics.metrics.planeSeenTheMost || "prowler"]} size='big'
-                               circular/>
                         <Header.Content>{name}</Header.Content>
                     </Header>
 
