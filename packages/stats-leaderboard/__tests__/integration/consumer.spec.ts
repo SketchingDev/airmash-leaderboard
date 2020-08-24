@@ -81,5 +81,44 @@ describe("Take snapshots of Games", () => {
             }]
         ));
     });
+
+    test("Player ignored if they don't have an account", async () => {
+        const player: Player = {
+            name: v4(),
+            accountLevel: undefined,
+            airplaneType: "predator"
+        }
+
+        const event: EventBridgeEvent<"login", LoggedInEvent> = {
+            version: "0",
+            id: "2f2bce7b-8724-21c7-a8bc-c996f415fa59",
+            "detail-type": "login",
+            source: "game-bot",
+            account: "794559416598",
+            time: "2020-08-03T20:33:39Z",
+            region: "us-east-1",
+            resources: [],
+            detail: {
+                url: `wss://${v4()}/ffa`,
+                timestamp: Date.now(),
+                gameType: "free-for-all",
+                players: [player]
+            }
+        };
+        playersToCleanup.push({playerName: player.name, snapshotTimestamp: new Date(event.detail.timestamp)});
+
+        const deps: AppDependencies = {gameSnapshotRepository};
+        await eventBridgeAdaptor(app(deps))(event, {} as any, jest.fn());
+
+        const snapshots = await gameSnapshotRepository.findPlayerLevelsByWeek(getWeek(Date.now()));
+        expect(snapshots).toMatchObject(expect.not.arrayContaining(
+            [{
+                level: player.accountLevel,
+                playerName: player.name,
+                snapshotTimestamp: expect.any(Date),
+                week: `${getWeek(Date.now())}`
+            }]
+        ));
+    });
 });
 

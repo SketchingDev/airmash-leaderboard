@@ -1,5 +1,5 @@
 import {GameSnapshotRepository} from "../../storage/GameSnapshotRepository";
-import {LoggedInEvent} from "../../events/LoggedInEvent";
+import {LoggedInEvent, Player} from "../../events/LoggedInEvent";
 import {getWeek} from "date-fns";
 
 export interface AppDependencies {
@@ -8,8 +8,12 @@ export interface AppDependencies {
 
 export type SaveLogin = (event: LoggedInEvent) => Promise<void>;
 
+const playerHasAccount = (player: Player) => player.accountLevel !== undefined;
+
 export const app = (deps: AppDependencies): SaveLogin => async (event: LoggedInEvent) => {
-    for(const player of event.players) {
+    const loggedInPlayers = event.players.filter(playerHasAccount);
+
+    for(const player of loggedInPlayers) {
         await deps.gameSnapshotRepository.saveSnapshot({
             airplaneType: player.airplaneType,
             level: player.accountLevel || 0,
