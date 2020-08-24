@@ -3,7 +3,7 @@
 ## Architecture
 
 <p align="center">
-  <img src="docs/architecture.png">
+  <img src="docs/architecture.jpg">
 </p>
 
 ## Manual Testing

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import '../App.css';
-import {Container, Header, Image} from "semantic-ui-react";
+import {Container, Header, Icon, Image, Popup} from "semantic-ui-react";
 import {useParams} from 'react-router-dom';
 import {ApiClient, PlayerMetrics} from "../api/ApiClient";
 import {formatDistanceToNow, subWeeks} from 'date-fns';
@@ -64,9 +64,15 @@ const Player = ({client}: PlayerProps) => {
                     </Header>
 
                     <p>Level: {playerMetrics.metrics.level}</p>
-                    { /* TODO Move instantiating date to client */}
-                    <p>Last seen {formatDistanceToNow(new Date(playerMetrics.metrics.lastSeenOnline))} ago</p>
+                    <p>
+                        <Popup trigger={<Icon name='question circle' />}>
+                            This is the when the bot last saw you. Is this is wrong then it's likely you weren't
+                            in the game when the bot scanned it.
+                        </Popup>
+                        Last seen {formatDistanceToNow(new Date(playerMetrics.metrics.lastSeenOnline))} ago
+                    </p>
 
+                    <Header as='h3' textAlign={"left"}>Days seen</Header>
                     <ResponsiveCalendar
                         data={playerMetrics.metrics.daysSeenOnline.map(s => ({day: s, value: 0}))}
                         from={subWeeks(new Date(), 2)}
