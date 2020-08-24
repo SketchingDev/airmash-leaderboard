@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import '../App.css';
-import {Container, Header, Image} from "semantic-ui-react";
+import {Container, Header, Icon, Image, Popup} from "semantic-ui-react";
 import {useParams} from 'react-router-dom';
 import {ApiClient, PlayerMetrics} from "../api/ApiClient";
 import {formatDistanceToNow, subWeeks} from 'date-fns';
@@ -55,7 +55,7 @@ const Player = ({client}: PlayerProps) => {
     } else {
         return (
             <div className="App">
-                <Container style={{ height: 200 }}>
+                <Container style={{height: 200}}>
                     <Image src={planes[playerMetrics.metrics.planeSeenTheMost || "prowler"]}
                            size='small'
                            circular centered={true}/>
@@ -64,16 +64,24 @@ const Player = ({client}: PlayerProps) => {
                     </Header>
 
                     <p>Level: {playerMetrics.metrics.level}</p>
-                    { /* TODO Move instantiating date to client */}
-                    <p>Last seen {formatDistanceToNow(new Date(playerMetrics.metrics.lastSeenOnline))} ago</p>
+                    <p>
+                        <Popup trigger={<Icon name='question circle'/>}>
+                            This is the when the bot last saw you. Is this is wrong then it's likely you weren't
+                            in the game when the bot scanned it.
+                        </Popup>
+                        Last seen {formatDistanceToNow(new Date(playerMetrics.metrics.lastSeenOnline))} ago
+                    </p>
 
+                    <Header as='h3' textAlign={"left"}>Days seen</Header>
                     <ResponsiveCalendar
-                        data={playerMetrics.metrics.daysSeenOnline.map(s => ({day: s, value: 0}))}
+                        data={playerMetrics.metrics.daysSeenOnline.map(s => ({day: s.date, value: s.level}))}
                         from={subWeeks(new Date(), 2)}
                         to={new Date()}
                         emptyColor='#eeeeee'
-                        colors={[ '#61cdbb' ]}
-                        margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
+                        colors={['#61cdbb', '#97e3d5', '#e8c1a0', '#f47560']}
+                        margin={{top: 40, right: 40, bottom: 40, left: 40}}
+                        minValue={0}
+                        maxValue={60}
                         yearSpacing={40}
                         yearLegendOffset={14}
                         monthBorderColor="#ffffff"
