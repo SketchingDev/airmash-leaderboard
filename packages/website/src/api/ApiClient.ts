@@ -22,13 +22,18 @@ export interface PlayerMetricsNotFound {
     playerFound: false;
 }
 
+export interface DaySeenOnline {
+    date: string;
+    level: number;
+}
+
 export interface PlayerMetricsFound {
     playerFound: true;
     metrics: {
         name: string;
         level: number;
         lastSeenOnline: string;
-        daysSeenOnline: string[];
+        daysSeenOnline: DaySeenOnline[];
         planeSeenTheMost: 'predator' | 'goliath' | 'copter' | 'tornado' | 'prowler' | undefined;
     }
 }

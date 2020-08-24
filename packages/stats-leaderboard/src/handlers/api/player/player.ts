@@ -9,13 +9,18 @@ export interface PlayerMetricsNotFound {
     playerFound: false;
 }
 
+interface DaySeenOnline {
+    date: string;
+    level: number;
+}
+
 export interface PlayerMetricsFound {
     playerFound: true;
     metrics: {
         name: string;
         level: number;
         lastSeenOnline: Date;
-        daysSeenOnline: string[];
+        daysSeenOnline: DaySeenOnline[];
         planeSeenTheMost: PlayerSnapshot["airplaneType"] | undefined;
     }
 }
@@ -32,12 +37,15 @@ const mode = (planes: PlayerSnapshot["airplaneType"][]) =>
 export type Player = (parameters: { [p: string]: string }) => Promise<PlayerMetrics>;
 
 
-const daysSeenOnline = (snapshots: PlayerSnapshot[]): string[] => {
+const daysSeenOnline = (snapshots: PlayerSnapshot[]): DaySeenOnline[] => {
     const dates = snapshots.map(
-        s => formatISO(s.snapshotTimestamp, { representation: 'date' })
+        s => JSON.stringify({
+            date: formatISO(s.snapshotTimestamp, { representation: 'date' }),
+            level: s.level
+        })
     );
 
-    return Array.from(new Set(dates))
+    return Array.from(new Set(dates)).map(s => JSON.parse(s));
 }
 
 const currentLevel = (snapshots: PlayerSnapshot[]) =>

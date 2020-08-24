@@ -145,8 +145,8 @@ describe("Player endpoint", () => {
                 playerFound: true,
                 metrics: {
                     daysSeenOnline: [
-                        "2020-08-14",
-                        "2020-08-15"
+                        {date: "2020-08-14", level: 1},
+                        {date: "2020-08-15", level: 2}
                     ]
                 }
             }
