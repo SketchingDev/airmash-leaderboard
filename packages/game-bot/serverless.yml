@@ -36,4 +36,4 @@ functions:
       GAME_DATA_URL: ${self:custom.gameDataUrl.${self:provider.stage}}
       PLAYER_NAME: airmash-leaderboard
     events:
-      - schedule: rate(1 hour)
+      - schedule: rate(30 minutes)
