@@ -9,6 +9,7 @@ provider:
   name: aws
   runtime: nodejs10.x
   stage: ${opt:stage, 'dev'}
+  logRetentionInDays: 14
   stackTags:
     PROJECT: "airmash-leaderboard"
   environment:
@@ -40,7 +41,7 @@ functions:
       - eventBridge:
           pattern:
             source:
-              - game-bot
+              - profanity-filter
             detail-type:
               - login
 

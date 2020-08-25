@@ -1,8 +1,9 @@
 service:
-  name: game-bot
+  name: profanity-filter
 
 plugins:
   - serverless-plugin-monorepo
+  - serverless-iam-roles-per-function
 
 provider:
   name: aws
@@ -22,19 +23,17 @@ provider:
 custom:
   stages:
     - dev
-    - ci
     - prod
-  gameDataUrl:
-    dev: https://raw.githubusercontent.com/airmash-refugees/airmash-games/master/games.txt
-    ci: http://test.test/games.txt
-    prod: https://raw.githubusercontent.com/airmash-refugees/airmash-games/master/games.txt
+    - ci
 
 functions:
-  gameBot:
+  consumer:
     handler: dist/handler.handler
     timeout: 40
-    environment:
-      GAME_DATA_URL: ${self:custom.gameDataUrl.${self:provider.stage}}
-      PLAYER_NAME: airmash-leaderboard
     events:
-      - schedule: rate(30 minutes)
+      - eventBridge:
+          pattern:
+            source:
+              - game-bot
+            detail-type:
+              - login
