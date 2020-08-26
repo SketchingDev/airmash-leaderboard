@@ -39,7 +39,8 @@
   "dependencies": {
     "bad-words": "^3.0.3",
     "serverless-iam-roles-per-function": "^2.0.2",
-    "serverless-stage-manager": "^1.0.5"
+    "serverless-stage-manager": "^1.0.5",
+    "getenv": "^1.0.0",
   },
   "jest": {
     "preset": "ts-jest",

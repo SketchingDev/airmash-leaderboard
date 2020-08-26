@@ -8,12 +8,16 @@ import {EventBridge} from "aws-sdk";
 
 const gameDataUrl = url("GAME_DATA_URL");
 const playerName = string('PLAYER_NAME');
+const eventBusName = string('EVENT_BUS_NAME', "default");
+const sourceName = string('SOURCE_NAME', "game-bot");
 
 const deps: AdaptorDependencies & AppDependencies = {
     airMashConnection: new AirMashConnection(),
     eventBridge: new EventBridge(),
     gameDataLoader: () => parseGamesFromRemoteFile(gameDataUrl),
-    playerName
+    playerName,
+    eventBusName,
+    sourceName
 }
 
 export const handler: ScheduledHandler = gameDataAdaptor(app(deps), deps);

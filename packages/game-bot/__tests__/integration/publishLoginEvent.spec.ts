@@ -31,7 +31,9 @@ describe("Produce login event", () => {
                     roomId: "ffa1",
                     url: localServerUrl,
                 }
-            ]
+            ],
+            eventBusName: "default",
+            sourceName: "game-bot",
         };
 
         await gameDataAdaptor(app(dependencies), dependencies)();

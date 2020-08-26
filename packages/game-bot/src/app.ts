@@ -7,6 +7,8 @@ export interface AppDependencies {
     eventBridge: EventBridge;
     airMashConnection: AirMashConnection;
     playerName: string;
+    eventBusName: string;
+    sourceName: string;
 }
 
 export type SaveGame = (gameData: GameUrl[]) => Promise<void>;
@@ -26,8 +28,8 @@ export const app = (deps: AppDependencies): SaveGame => async (gameData: GameUrl
 
     const params: EventBridge.Types.PutEventsRequest = {
         Entries: logins.map(l => ({
-            EventBusName: "default",
-            Source: "game-bot",
+            EventBusName: deps.eventBusName,
+            Source: deps.sourceName,
             DetailType: "login",
             Detail: JSON.stringify(l),
         }))

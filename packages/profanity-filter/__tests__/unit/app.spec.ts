@@ -19,7 +19,9 @@ describe("Profanity Filter", () => {
         const deps: AppDependencies = {
             badWordFilter: new BadWordsFilter({list: [insultingWord]}),
             eventBridge: eventBridge as any as EventBridge,
-            logger: {info: jest.fn()}
+            logger: {info: jest.fn()},
+            eventBusName: "",
+            sourceName: "",
         }
 
         const profanePlayer: Player = {
@@ -55,7 +57,6 @@ describe("Profanity Filter", () => {
 
         const detail = (eventBridge.putEvents.mock.calls[0][0] as any as EventBridge.Types.PutEventsRequest).Entries[0].Detail as string;
         expect(JSON.parse(detail)).toStrictEqual({
-            sanitised: true,
             url: event.detail.url,
             timestamp: event.detail.timestamp,
             gameType: event.detail.gameType,
