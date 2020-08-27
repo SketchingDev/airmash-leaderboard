@@ -3,6 +3,7 @@ import {EventBridge} from "aws-sdk";
 
 interface BadWordsFilter {
     isProfane(text: string): boolean;
+
     clean(text: string): string;
 }
 
@@ -17,12 +18,20 @@ export interface AppDependencies {
 export type FilterPlayers = (event: LoggedInEvent) => Promise<void>;
 
 export const app = (deps: AppDependencies): FilterPlayers => async (event: LoggedInEvent) => {
-    event.players
-        .filter(p => deps.badWordFilter.isProfane(p.name))
-        .forEach(p => deps.logger.info('Player filtered', {
-            name: p.name,
-            cleaned: deps.badWordFilter.clean(p.name)
-        }));
+    for (const p of event.players){
+        if (deps.badWordFilter.isProfane(p.name)) {
+            deps.logger.info('Player filtered', {
+                safe: false,
+                name: p.name,
+                cleaned: deps.badWordFilter.clean(p.name)
+            });
+        } else {
+            deps.logger.info('Player not filtered', {
+                safe: true,
+                name: p.name
+            });
+        }
+    }
 
     const sanitisedEvent = {
         ...event,
