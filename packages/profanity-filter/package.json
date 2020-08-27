@@ -1,15 +1,14 @@
 {
-  "name": "@sketchingdev/stats-leaderboard",
+  "name": "@sketchingdev/profanity-filter",
   "private": true,
   "version": "1.0.0",
-  "description": "Leaderboard stats",
+  "description": "Filters out players with profanity in their name",
   "license": "MIT",
   "scripts": {
     "clean": "yarn rimraf ./dist",
     "build": "yarn clean && tsc -p tsconfig.build.json",
     "test": "jest '__tests__/(unit|integration)'",
     "test:unit": "jest '__tests__/unit'",
-    "test:integration": "jest '__tests__/integration'",
     "deploy:dev": "yarn build && sls deploy --stage dev --conceal",
     "destroy:dev": "sls remove --stage dev",
     "monitor:dev": "sls-dev-tools --region us-east-1 --sls -s dev",
@@ -21,13 +20,12 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.37",
-    "@types/getenv": "^1.0.0",
+    "@types/bad-words": "^3.0.0",
     "@types/jest": "^24.9.1",
     "@types/node": "^13.9.1",
     "@types/utf8": "^2.1.6",
     "@types/uuid": "^8.0.0",
     "aws-sdk": "^2.706.0",
-    "dotenv": "^8.2.0",
     "jest": "^24.9.0",
     "rimraf": "^3.0.2",
     "serverless": "^1.80.0",
@@ -39,12 +37,11 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
-    "date-fns": "^2.14.0",
-    "dynamodb-toolbox": "^0.2.0-beta.1",
+    "aws-embedded-metrics": "^2.0.0",
+    "bad-words": "^3.0.3",
     "getenv": "^1.0.0",
     "serverless-iam-roles-per-function": "^2.0.2",
-    "serverless-stage-manager": "^1.0.5",
-    "uuid": "^8.2.0"
+    "serverless-stage-manager": "^1.0.5"
   },
   "jest": {
     "preset": "ts-jest",

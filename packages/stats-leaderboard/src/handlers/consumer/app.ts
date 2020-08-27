@@ -8,7 +8,7 @@ export interface AppDependencies {
 
 export type SaveLogin = (event: LoggedInEvent) => Promise<void>;
 
-const playerHasAccount = (player: Player) => player.accountLevel !== undefined;
+const playerHasAccount = (player: Player) => player.accountLevel !== undefined && player.accountLevel > 0;
 
 export const app = (deps: AppDependencies): SaveLogin => async (event: LoggedInEvent) => {
     const loggedInPlayers = event.players.filter(playerHasAccount);
