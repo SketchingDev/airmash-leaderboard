@@ -5,7 +5,7 @@ as they could be.
 
 **Creating User**
 
-```bash
+```shell
 aws cloudformation create-stack \
   --stack-name airmash-leaderboard-deployment-user \
   --capabilities CAPABILITY_NAMED_IAM \
@@ -14,7 +14,7 @@ aws cloudformation create-stack \
 
 **Updating User**
 
-```bash
+```shell
 aws cloudformation update-stack \
   --stack-name airmash-leaderboard-deployment-user \
   --capabilities CAPABILITY_NAMED_IAM \
@@ -25,7 +25,7 @@ aws cloudformation update-stack \
 
 Follow these steps to configure your environment to use the deployment user.
 
-```bash
+```shell
 # 1. Retrieve user's Access Key and Secret
 aws cloudformation describe-stacks --stack-name airmash-leaderboard-deployment-user
 
