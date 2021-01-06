@@ -43,7 +43,7 @@
   "dependencies": {
     "@airbattle/protocol": "github:wight-airmash/ab-protocol#master",
     "@sketchingdev/airmash-client": "1.0.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "date-fns": "^2.14.0",
     "getenv": "^1.0.0",
     "serverless-iam-roles-per-function": "^2.0.2",
